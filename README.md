@@ -33,3 +33,7 @@ This software is built entirely as an agile client-side stack requiring zero ext
 ```bash
 ├── index.html         # The complete Single Page Application (UI + Core JavaScript Engine)
 └── README.md          # Project documentation and deployment guide
+
+## NOTE
+I recommend only running this LOCALLY, It was not made to be hosted on the web and is not designed to prevent unauthorzied access on the internet
+I also recommend regular backups to prevent data loss

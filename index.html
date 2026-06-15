@@ -494,10 +494,10 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedData = localStorage.getItem('maintex_pm_db');
-            const savedArchive = localStorage.getItem('maintex_archive_db');
-            const savedTheme = localStorage.getItem('maintex_site_theme');
-            const savedPin = localStorage.getItem('maintex_site_pin');
+            const savedData = localStorage.getItem('pulsar_pm_db');
+            const savedArchive = localStorage.getItem('pulsar_archive_db');
+            const savedTheme = localStorage.getItem('pulsar_site_theme');
+            const savedPin = localStorage.getItem('pulsar_site_pin');
             
             if (savedData) {
                 pmDatabase = JSON.parse(savedData);
@@ -564,7 +564,7 @@
                 return;
             }
             sitePin = pinVal;
-            localStorage.setItem('maintex_site_pin', sitePin);
+            localStorage.setItem('pulsar_site_pin', sitePin);
             document.getElementById('admin-pin-set').value = '';
             alert("Security PIN status successfully mapped into node local storage properties.");
             updateAdminPinUI();
@@ -574,7 +574,7 @@
             if (confirm("Deactivate security protocol layer? The site terminal will default to an open status on subsequent initializations.")) {
                 sitePin = null;
                 isLocked = false;
-                localStorage.removeItem('maintex_site_pin');
+                localStorage.removeItem('pulsar_site_pin');
                 updateAdminPinUI();
                 checkLockoutState();
             }
@@ -602,7 +602,7 @@
         function setSystemTheme(colorKey) {
             if (themeConfig[colorKey]) {
                 currentTheme = colorKey;
-                localStorage.setItem('maintex_site_theme', colorKey);
+                localStorage.setItem('pulsar_site_theme', colorKey);
                 applyThemeClasses();
             }
         }
@@ -630,8 +630,8 @@
         }
 
         function saveToStorage() {
-            localStorage.setItem('maintex_pm_db', JSON.stringify(pmDatabase));
-            localStorage.setItem('maintex_archive_db', JSON.stringify(archiveDatabase));
+            localStorage.setItem('pulsar_pm_db', JSON.stringify(pmDatabase));
+            localStorage.setItem('pulsar_archive_db', JSON.stringify(archiveDatabase));
         }
 
         /* BACKUP ENGINE FUNCTIONALITIES WITH SECURITY PERSISTENCE */
@@ -650,7 +650,7 @@
             const dateStamp = new Date().toISOString().split('T')[0];
             
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `MainteX_Backup_${dateStamp}.json`);
+            downloadAnchor.setAttribute("download", `Pulsar_Backup_${dateStamp}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -700,12 +700,12 @@
                             // Restore and apply security configurations safely
                             if (importedData.sitePin && /^\d{4}$/.test(importedData.sitePin)) {
                                 sitePin = importedData.sitePin;
-                                localStorage.setItem('maintex_site_pin', sitePin);
+                                localStorage.setItem('pulsar_site_pin', sitePin);
                                 isLocked = true; // Lock terminal to protect newly imported records
                             } else {
                                 sitePin = null;
                                 isLocked = false;
-                                localStorage.removeItem('maintex_site_pin');
+                                localStorage.removeItem('pulsar_site_pin');
                             }
                             
                             saveToStorage();
@@ -716,7 +716,7 @@
                             alert("Database state and security profiles successfully restored from backup package.");
                         }
                     } else {
-                        alert("Invalid file format. The selected JSON does not match a valid MainteX Pro data profile.");
+                        alert("Invalid file format. The selected JSON does not match a valid Pulsar Pro data profile.");
                     }
                 } catch (err) {
                     alert("Error parsing backup data file. Ensure it is a valid, uncorrupted backup .json.");

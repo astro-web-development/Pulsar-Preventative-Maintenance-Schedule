@@ -16,8 +16,8 @@
 <body class="bg-gray-100 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- SECURITY LOCKOUT POPUP OVERLAY MODAL -->
-    <div id="lockout-modal" class="fixed inset-0 z-50 bg-slate-900/95 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-4 border-red-500 space-y-6">
+    <div id="lockout-modal" class="fixed inset-0 z-50 bg-slate-900/95 flex items-center justify-center p-4 hidden">
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-4 border-red-500 space-y-6">
             <div>
                 <div class="mx-auto bg-red-50 text-red-500 w-16 h-16 rounded-full flex items-center justify-center text-2xl mb-3">
                     <i class="fa-solid fa-lock"></i>
@@ -35,17 +35,65 @@
         </div>
     </div>
 
+    <!-- MOBILE SIDEBAR DRAWER MENU (Hidden on Desktop via lg:hidden) -->
+    <div id="mobile-sidebar-container" class="fixed inset-0 z-40 hidden lg:hidden" role="dialog" aria-modal="true">
+        <!-- Backdrop Backdrop Overlay -->
+        <div onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
+        
+        <!-- Sidebar Panel Element -->
+        <div class="fixed inset-y-0 left-0 w-72 bg-slate-800 text-white flex flex-col shadow-2xl border-r-4 border-yellow-500 transform transition-transform duration-300 ease-in-out">
+            <div class="p-5 border-b border-slate-700 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i id="sidebar-logo-icon" class="fa-solid fa-gears text-yellow-400 text-2xl animate-pulse"></i>
+                    <h2 class="text-base font-black uppercase tracking-wider">Pulsar Menu</h2>
+                </div>
+                <button onclick="toggleMobileSidebar()" class="text-slate-400 hover:text-white p-1 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="flex-grow p-4 space-y-1.5 overflow-y-auto">
+                <button onclick="switchView('dashboard'); toggleMobileSidebar();" id="btn-side-dashboard" class="side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200">
+                    <i class="fa-solid fa-chart-line mr-3 text-base"></i>Dashboard
+                </button>
+                <button onclick="switchView('scheduler'); toggleMobileSidebar();" id="btn-side-scheduler" class="side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/40">
+                    <i class="fa-solid fa-calendar-days mr-3 text-base"></i>PM Master Calendar
+                </button>
+                <button onclick="switchView('builder'); toggleMobileSidebar();" id="btn-side-builder" class="side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/40">
+                    <i class="fa-solid fa-file-invoice mr-3 text-base"></i>Create/Edit PM Sheet
+                </button>
+                <button onclick="switchView('archive'); toggleMobileSidebar();" id="btn-side-archive" class="side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/40">
+                    <i class="fa-solid fa-box-archive mr-3 text-base"></i>Archive
+                </button>
+                <button onclick="switchView('admin'); toggleMobileSidebar();" id="btn-side-admin" class="side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/40">
+                    <i class="fa-solid fa-user-gear mr-3 text-base"></i>Admin Settings
+                </button>
+            </nav>
+            <div class="p-4 border-t border-slate-700 text-[10px] text-slate-400 text-center font-mono">
+                v2026.2 Mobile Engine
+            </div>
+        </div>
+    </div>
+
     <!-- TOP HEADER / NAVIGATION -->
     <header id="site-header" class="bg-slate-800 text-white shadow-md border-b-4 border-yellow-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            
+            <!-- Logo Section Area -->
             <div class="flex items-center space-x-3">
                 <i id="header-logo-icon" class="fa-solid fa-gears text-yellow-400 text-3xl animate-pulse"></i>
                 <div>
-                    <h1 class="text-xl font-black uppercase tracking-wider">Pulsar Preventative</h1>
-                    <p class="text-xs text-slate-400 font-medium">Industrial Preventative Maintenance Engine</p>
+                    <h1 class="text-lg sm:text-xl font-black uppercase tracking-wider leading-tight">Pulsar Preventative</h1>
+                    <p class="text-[10px] sm:text-xs text-slate-400 font-medium">Industrial Preventative Maintenance Engine</p>
                 </div>
             </div>
-            <nav class="flex space-x-2 bg-slate-900/50 p-1 rounded-lg border border-slate-700">
+
+            <!-- Hamburger Button (Visible ONLY on mobile/tablet viewport layout grids) -->
+            <button onclick="toggleMobileSidebar()" class="lg:hidden bg-slate-900/60 hover:bg-slate-900 border border-slate-700 p-2.5 rounded-lg transition text-yellow-400 focus:outline-none">
+                <i class="fa-solid fa-bars text-xl block"></i>
+            </button>
+
+            <!-- Standard Horizontal Desktop Navbar (Hidden on Mobile via hidden lg:flex) -->
+            <nav class="hidden lg:flex space-x-2 bg-slate-900/50 p-1 rounded-lg border border-slate-700">
                 <button onclick="switchView('dashboard')" id="btn-nav-dashboard" class="nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200">
                     <i class="fa-solid fa-chart-line mr-2"></i>Dashboard
                 </button>
@@ -66,56 +114,56 @@
     </header>
 
     <!-- MAIN INTERACTIVE HUB CONTAINER -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         
         <!-- 1. DASHBOARD VIEW -->
         <section id="view-dashboard" class="space-y-6">
             <!-- Summary Insights Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500 flex items-center justify-between">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
+                <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border-l-4 border-blue-500 flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase">Active PMs</p>
-                        <h3 id="stat-total" class="text-2xl font-bold mt-1 text-gray-900">0</h3>
+                        <p class="text-[10px] sm:text-sm font-medium text-gray-500 uppercase">Active PMs</p>
+                        <h3 id="stat-total" class="text-xl sm:text-2xl font-bold mt-1 text-gray-900">0</h3>
                     </div>
-                    <div class="p-3 bg-blue-50 text-blue-500 rounded-lg text-xl"><i class="fa-solid fa-folder-open"></i></div>
+                    <div class="p-2 sm:p-3 bg-blue-50 text-blue-500 rounded-lg text-sm sm:text-xl"><i class="fa-solid fa-folder-open"></i></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-yellow-500 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border-l-4 border-yellow-500 flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase">Pending Review</p>
-                        <h3 id="stat-pending" class="text-2xl font-bold mt-1 text-gray-900">0</h3>
+                        <p class="text-[10px] sm:text-sm font-medium text-gray-500 uppercase">Pending Review</p>
+                        <h3 id="stat-pending" class="text-xl sm:text-2xl font-bold mt-1 text-gray-900">0</h3>
                     </div>
-                    <div class="p-3 bg-yellow-50 text-yellow-600 rounded-lg text-xl"><i class="fa-solid fa-clock"></i></div>
+                    <div class="p-2 sm:p-3 bg-yellow-50 text-yellow-600 rounded-lg text-sm sm:text-xl"><i class="fa-solid fa-clock"></i></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-500 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border-l-4 border-red-500 flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase">Critical Warnings</p>
-                        <h3 id="stat-critical" class="text-2xl font-bold mt-1 text-gray-900">0</h3>
+                        <p class="text-[10px] sm:text-sm font-medium text-gray-500 uppercase">Critical Warnings</p>
+                        <h3 id="stat-critical" class="text-xl sm:text-2xl font-bold mt-1 text-gray-900">0</h3>
                     </div>
-                    <div class="p-3 bg-red-50 text-red-500 rounded-lg text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="p-2 sm:p-3 bg-red-50 text-red-500 rounded-lg text-sm sm:text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-purple-500 flex items-center justify-between">
+                <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border-l-4 border-purple-500 flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase">Total Archived</p>
-                        <h3 id="stat-archived" class="text-2xl font-bold mt-1 text-gray-900">0</h3>
+                        <p class="text-[10px] sm:text-sm font-medium text-gray-500 uppercase">Total Archived</p>
+                        <h3 id="stat-archived" class="text-xl sm:text-2xl font-bold mt-1 text-gray-900">0</h3>
                     </div>
-                    <div class="p-3 bg-purple-50 text-purple-600 rounded-lg text-xl"><i class="fa-solid fa-box-archive"></i></div>
+                    <div class="p-2 sm:p-3 bg-purple-50 text-purple-600 rounded-lg text-sm sm:text-xl"><i class="fa-solid fa-box-archive"></i></div>
                 </div>
             </div>
 
-            <!-- Master Equipment / PM Registry Table -->
+            <!-- Master Equipment / PM Registry Table Wrapper -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/70">
+                <div class="p-4 sm:p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/70">
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900">Active Preventative Maintenance Matrix</h2>
-                        <p class="text-sm text-gray-500">Live operational database of pending PMs.</p>
+                        <h2 class="text-base sm:text-lg font-bold text-gray-900">Active Preventative Maintenance Matrix</h2>
+                        <p class="text-xs sm:text-sm text-gray-500">Live operational database of pending PMs.</p>
                     </div>
-                    <button onclick="openNewPMForm()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow shadow-blue-200 transition flex items-center">
+                    <button onclick="openNewPMForm()" class="w-full sm:w-auto justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow shadow-blue-200 transition flex items-center">
                         <i class="fa-solid fa-plus mr-2"></i>New PM Specification
                     </button>
                 </div>
                 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="overflow-x-auto block w-full">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-gray-200">
                                 <th class="p-4">Asset Identification</th>
@@ -131,8 +179,8 @@
                             <!-- Dynamic Injection Area -->
                         </tbody>
                     </table>
-                    <div id="no-data-view" class="hidden p-12 text-center text-gray-400">
-                        <i class="fa-solid fa-toolbox text-5xl mb-3 block text-gray-300"></i>
+                    <div id="no-data-view" class="hidden p-8 sm:p-12 text-center text-gray-400">
+                        <i class="fa-solid fa-toolbox text-4xl sm:text-5xl mb-3 block text-gray-300"></i>
                         <span class="font-medium text-base text-gray-500">No Active PM Profiles running.</span>
                         <p class="text-xs text-gray-400 mt-1">All entries have either been handled, cleared, or transitioned into historical logs.</p>
                     </div>
@@ -142,24 +190,26 @@
 
         <!-- 2. CALENDAR VIEW -->
         <section id="view-scheduler" class="hidden space-y-4">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <div class="mb-4 flex justify-between items-center border-b border-gray-100 pb-3">
+            <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
+                <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-100 pb-3">
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900">Dynamic Production Calendar</h2>
-                        <p class="text-sm text-gray-500">Click a solid event to edit the root entry. Click a looped (<i class="fa-solid fa-arrows-rotate text-xs"></i>) future date event to instantly instantiate a brand new PM sheet for that day.</p>
+                        <h2 class="text-base sm:text-lg font-bold text-gray-900">Dynamic Production Calendar</h2>
+                        <p class="text-xs sm:text-sm text-gray-500">Click an event to edit or log a unique future instance sheet layout.</p>
                     </div>
                     <span class="text-xs bg-slate-100 px-2.5 py-1 text-slate-600 rounded border border-slate-200 font-mono">Dynamic Dispatch Active</span>
                 </div>
-                <div id="calendar" class="min-h-[650px] bg-white rounded-lg p-2 text-sm"></div>
+                <div class="overflow-x-auto">
+                    <div id="calendar" class="min-h-[500px] sm:min-h-[650px] min-w-[600px] sm:min-w-0 bg-white rounded-lg p-1 sm:p-2 text-xs sm:text-sm"></div>
+                </div>
             </div>
         </section>
 
         <!-- 3. PM BUILDER & REVISION SHEET -->
-        <section id="view-builder" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <section id="view-builder" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             <!-- Left inputs / control column -->
-            <div class="lg:col-span-5 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
+            <div class="lg:col-span-5 bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
                 <div class="border-b border-gray-100 pb-3">
-                    <h2 id="builder-form-title" class="text-lg font-bold text-gray-900">Define PM Parameters</h2>
+                    <h2 id="builder-form-title" class="text-base sm:text-lg font-bold text-gray-900">Define PM Parameters</h2>
                     <p class="text-xs text-gray-500">Update values to render down to standard professional physical sheets.</p>
                 </div>
 
@@ -195,7 +245,7 @@
                         <input type="text" id="form-title" required placeholder="e.g., Main Spindle & Hydraulic Pack Inspection" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Execution Target Date</label>
                             <input type="date" id="form-date" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
@@ -222,9 +272,9 @@
 
                     <!-- Task Verification Step Injector -->
                     <div class="border-t border-gray-100 pt-4">
-                        <div class="flex justify-between items-center mb-2">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
                             <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide">PM Verification Step Checklist</label>
-                            <button type="button" onclick="addChecklistItem({text:'', checked:false, condition:''})" class="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center bg-blue-50 px-2 py-1 rounded">
+                            <button type="button" onclick="addChecklistItem({text:'', checked:false, condition:''})" class="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center bg-blue-50 px-2 py-1 rounded w-full sm:w-auto justify-center">
                                 <i class="fa-solid fa-plus-circle mr-1"></i>Append Row
                             </button>
                         </div>
@@ -245,51 +295,46 @@
             </div>
 
             <!-- Right dynamic real-time print preview document block -->
-            <div class="lg:col-span-7 space-y-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold uppercase text-gray-400 tracking-widest"><i class="fa-solid fa-eye mr-1"></i> ISO 9001 Compliant Document Live-Preview</span>
-                    <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center transition">
+            <div class="lg:col-span-7 space-y-4 overflow-x-auto w-full">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <span class="text-[10px] sm:text-xs font-bold uppercase text-gray-400 tracking-widest"><i class="fa-solid fa-eye mr-1"></i> ISO 9001 Compliant Document Live-Preview</span>
+                    <button onclick="downloadPDF()" class="w-full sm:w-auto justify-center bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center transition">
                         <i class="fa-solid fa-file-pdf mr-2 text-sm"></i>Export Document as PDF
                     </button>
                 </div>
 
-                <!-- Printable Paper Container Area -->
-                <div class="bg-white rounded-xl shadow-xl border border-gray-300 overflow-hidden p-8 max-w-[210mm] mx-auto" id="pm-pdf-document">
-                    <!-- Internal Header -->
+                <div class="min-w-[768px] lg:min-w-0 bg-white rounded-xl shadow-xl border border-gray-300 p-4 sm:p-8 max-w-[210mm] mx-auto" id="pm-pdf-document">
                     <div class="flex justify-between items-start border-b-2 border-slate-800 pb-5">
                         <div>
                             <span class="bg-slate-800 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded tracking-wider">Plant Operations Doc</span>
-                            <h2 id="pdf-doc-title" class="text-xl font-bold tracking-tight text-slate-900 mt-1">PREVENTATIVE MAINTENANCE SPECIFICATION</h2>
+                            <h2 id="pdf-doc-title" class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 mt-1">PREVENTATIVE MAINTENANCE SPECIFICATION</h2>
                             <p class="text-xs text-slate-500 font-mono mt-0.5">Asset Ref ID: <span id="pdf-asset-id" class="font-bold text-slate-800">---</span></p>
                         </div>
                         <div class="text-right">
-                            <div id="pdf-doc-code" class="text-lg font-black text-slate-800 font-mono tracking-wider">PM-XXXX</div>
+                            <div id="pdf-doc-code" class="text-base sm:text-lg font-black text-slate-800 font-mono tracking-wider">PM-XXXX</div>
                             <div id="pdf-doc-freq" class="text-xs font-bold text-blue-600 uppercase">INTERVAL: ---</div>
                         </div>
                     </div>
 
-                    <!-- Meta Scope Grid -->
-                    <div class="grid grid-cols-4 gap-4 border-b border-gray-200 py-4 text-xs">
+                    <div class="grid grid-cols-4 gap-2 sm:gap-4 border-b border-gray-200 py-4 text-xs">
                         <div>
-                            <span class="text-gray-400 block font-semibold uppercase text-[10px]">Work Title / Target</span>
-                            <div id="pdf-meta-title" class="font-bold text-gray-800 text-sm mt-0.5">---</div>
+                            <span class="text-gray-400 block font-semibold uppercase text-[9px] sm:text-[10px]">Work Title / Target</span>
+                            <div id="pdf-meta-title" class="font-bold text-gray-800 text-xs sm:text-sm mt-0.5">---</div>
                         </div>
                         <div>
-                            <span class="text-gray-400 block font-semibold uppercase text-[10px]">Target Execution</span>
-                            <div id="pdf-meta-date" class="font-bold text-gray-800 text-sm mt-0.5">---</div>
+                            <span class="text-gray-400 block font-semibold uppercase text-[9px] sm:text-[10px]">Target Execution</span>
+                            <div id="pdf-meta-date" class="font-bold text-gray-800 text-xs sm:text-sm mt-0.5">---</div>
                         </div>
                         <div>
-                            <span class="text-gray-400 block font-semibold uppercase text-[10px]">Assigned Craftsman</span>
-                            <div id="pdf-meta-tech" class="font-bold text-gray-800 text-sm mt-0.5">---</div>
+                            <span class="text-gray-400 block font-semibold uppercase text-[9px] sm:text-[10px]">Assigned Craftsman</span>
+                            <div id="pdf-meta-tech" class="font-bold text-gray-800 text-xs sm:text-sm mt-0.5">---</div>
                         </div>
-                        <!-- New structural placeholder on preview pane for closure timestamp tracking -->
                         <div>
-                            <span class="text-gray-400 block font-semibold uppercase text-[10px]">Closeout Timestamp</span>
-                            <div id="pdf-meta-completed-date" class="font-bold text-purple-600 text-sm mt-0.5">---</div>
+                            <span class="text-gray-400 block font-semibold uppercase text-[9px] sm:text-[10px]">Closeout Timestamp</span>
+                            <div id="pdf-meta-completed-date" class="font-bold text-purple-600 text-xs sm:text-sm mt-0.5">---</div>
                         </div>
                     </div>
 
-                    <!-- Main Verification Tasks Table Structure -->
                     <div class="mt-6">
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded mb-3 border-l-4 border-slate-500">Prescribed Technical Protocols</h4>
                         <table class="w-full text-left border-collapse text-xs">
@@ -307,13 +352,11 @@
                         </table>
                     </div>
 
-                    <!-- Appended Field Notes Segment -->
                     <div class="mt-6">
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded mb-2 border-l-4 border-slate-500">Technical Field Notes & Remarks</h4>
                         <div id="pdf-notes-body" class="p-3 bg-gray-50 border border-gray-200 rounded text-xs min-h-[60px] text-gray-700 whitespace-pre-wrap italic font-mono">---</div>
                     </div>
 
-                    <!-- Quality Audit Authorization Footer Box -->
                     <div class="mt-10 pt-6 border-t border-dashed border-gray-300 grid grid-cols-2 gap-8 text-[11px]">
                         <div>
                             <div class="mb-4 text-gray-500 font-medium">I verify that the above tasks were thoroughly executed in compliance with safety lock-out/tag-out regulations.</div>
@@ -333,18 +376,18 @@
         <!-- 4. HISTORICAL ARCHIVE VIEW -->
         <section id="view-archive" class="hidden space-y-6">
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-purple-50/50">
+                <div class="p-4 sm:p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-purple-50/50">
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900"><i class="fa-solid fa-box-archive mr-2 text-purple-600"></i>Completed & Archived Document Vault</h2>
-                        <p class="text-sm text-gray-500">Historical catalog containing completed, closed-out PMs.</p>
+                        <h2 class="text-base sm:text-lg font-bold text-gray-900"><i class="fa-solid fa-box-archive mr-2 text-purple-600"></i>Completed & Archived Document Vault</h2>
+                        <p class="text-xs sm:text-sm text-gray-500">Historical catalog containing completed, closed-out PMs.</p>
                     </div>
-                    <button onclick="clearAllArchive()" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold text-xs px-3 py-2 rounded-lg transition">
+                    <button onclick="clearAllArchive()" class="w-full sm:w-auto justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold text-xs px-3 py-2 rounded-lg transition">
                         <i class="fa-solid fa-dumpster mr-1"></i>Purge Vault Logs
                     </button>
                 </div>
                 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="overflow-x-auto block w-full">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-gray-200">
                                 <th class="p-4">Asset Identification</th>
@@ -361,8 +404,8 @@
                             <!-- Archived Items injected here -->
                         </tbody>
                     </table>
-                    <div id="no-archive-view" class="hidden p-12 text-center text-gray-400">
-                        <i class="fa-solid fa-box-open text-5xl mb-3 block text-gray-300"></i>
+                    <div id="no-archive-view" class="hidden p-8 sm:p-12 text-center text-gray-400">
+                        <i class="fa-solid fa-box-open text-4xl sm:text-5xl mb-3 block text-gray-300"></i>
                         <span class="font-medium text-base text-gray-500">Historical Vault Empty.</span>
                         <p class="text-xs text-gray-400 mt-1">When an operation sheet transitions into "Completed OK" status, it clears the live desk into this location.</p>
                     </div>
@@ -372,33 +415,33 @@
 
         <!-- 5. ADMIN SETTINGS VIEW -->
         <section id="view-admin" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
+            <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
                 <div class="border-b border-gray-200 pb-4">
-                    <h2 class="text-lg font-bold text-gray-900"><i class="fa-solid fa-user-gear text-slate-700 mr-2"></i>Administrative System Control Panel</h2>
-                    <p class="text-sm text-gray-500">Manage internal configuration states, framework settings, and core application data.</p>
+                    <h2 class="text-base sm:text-lg font-bold text-gray-900"><i class="fa-solid fa-user-gear text-slate-700 mr-2"></i>Administrative System Control Panel</h2>
+                    <p class="text-xs sm:text-sm text-gray-500">Manage internal configuration states, framework settings, and core application data.</p>
                 </div>
 
                 <!-- TERMINAL SECURITY CONFIGURATION PANEL -->
-                <div class="p-5 rounded-xl border border-gray-200 bg-white space-y-4">
+                <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-white space-y-4">
                     <div class="flex items-center space-x-3">
-                        <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg"><i class="fa-solid fa-shield-halved text-lg"></i></div>
+                        <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-shield-halved text-base sm:text-lg"></i></div>
                         <div>
-                            <h3 class="text-sm font-bold text-gray-900">Security PIN Lockout Control</h3>
-                            <p class="text-xs text-gray-500">Require a 4-digit numeric access code to display operational views on application start. Default state is completely unlocked.</p>
+                            <h3 class="text-xs sm:text-sm font-bold text-gray-900">Security PIN Lockout Control</h3>
+                            <p class="text-[11px] sm:text-xs text-gray-500">Require a 4-digit numeric access code to display operational views on application start.</p>
                         </div>
                     </div>
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
                         <div class="w-full sm:w-auto">
                             <input type="password" id="admin-pin-set" maxlength="4" placeholder="New 4-Digit PIN" class="w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none tracking-widest text-center font-bold">
                         </div>
-                        <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                            <button onclick="savePinCode()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition shadow-sm flex items-center">
+                        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                            <button onclick="savePinCode()" class="w-full sm:w-auto justify-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition shadow-sm flex items-center">
                                 <i class="fa-solid fa-key mr-1.5"></i>Commit PIN
                             </button>
-                            <button id="btn-disable-pin" onclick="disablePinCode()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-4 py-2.5 rounded-lg transition hidden flex items-center">
+                            <button id="btn-disable-pin" onclick="disablePinCode()" class="w-full sm:w-auto justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-4 py-2.5 rounded-lg transition hidden flex items-center">
                                 <i class="fa-solid fa-unlock mr-1.5"></i>Disable PIN
                             </button>
-                            <button id="btn-lock-now" onclick="lockSiteManually()" class="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 text-xs font-bold px-4 py-2.5 rounded-lg transition hidden flex items-center">
+                            <button id="btn-lock-now" onclick="lockSiteManually()" class="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 text-xs font-bold px-4 py-2.5 rounded-lg transition hidden flex items-center">
                                 <i class="fa-solid fa-lock mr-1.5"></i>Lock Terminal Now
                             </button>
                         </div>
@@ -406,48 +449,48 @@
                 </div>
 
                 <!-- SECONDARY SITE ACCENT THEME COLOR PICKER -->
-                <div class="p-5 rounded-xl border border-gray-200 bg-white space-y-3">
+                <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-white space-y-3">
                     <div class="flex items-center space-x-3">
-                        <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg"><i class="fa-solid fa-palette text-lg"></i></div>
+                        <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-palette text-base sm:text-lg"></i></div>
                         <div>
-                            <h3 class="text-sm font-bold text-gray-900">Application Secondary Theme Color</h3>
-                            <p class="text-xs text-gray-500">Select an alternate branding color for active navigation tabs, header borders, and operational accents.</p>
+                            <h3 class="text-xs sm:text-sm font-bold text-gray-900">Application Secondary Theme Color</h3>
+                            <p class="text-[11px] sm:text-xs text-gray-500">Select an alternate branding color for active navigation tabs, header borders, and operational accents.</p>
                         </div>
                     </div>
-                    <div class="flex flex-wrap gap-3 pt-2">
-                        <button onclick="setSystemTheme('yellow')" class="flex items-center space-x-2 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-sm font-semibold text-gray-700">
-                            <span class="h-4 w-4 bg-yellow-500 rounded-full inline-block shadow-sm"></span>
+                    <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pt-2">
+                        <button onclick="setSystemTheme('yellow')" class="flex items-center justify-center sm:justify-start space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-xs sm:text-sm font-semibold text-gray-700">
+                            <span class="h-3.5 w-3.5 bg-yellow-500 rounded-full inline-block shadow-sm"></span>
                             <span>Industrial Yellow</span>
                         </button>
-                        <button onclick="setSystemTheme('blue')" class="flex items-center space-x-2 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-sm font-semibold text-gray-700">
-                            <span class="h-4 w-4 bg-blue-500 rounded-full inline-block shadow-sm"></span>
+                        <button onclick="setSystemTheme('blue')" class="flex items-center justify-center sm:justify-start space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-xs sm:text-sm font-semibold text-gray-700">
+                            <span class="h-3.5 w-3.5 bg-blue-600 rounded-full inline-block shadow-sm"></span>
                             <span>Corporate Blue</span>
                         </button>
-                        <button onclick="setSystemTheme('green')" class="flex items-center space-x-2 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-sm font-semibold text-gray-700">
-                            <span class="h-4 w-4 bg-green-500 rounded-full inline-block shadow-sm"></span>
+                        <button onclick="setSystemTheme('green')" class="flex items-center justify-center sm:justify-start space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-xs sm:text-sm font-semibold text-gray-700">
+                            <span class="h-3.5 w-3.5 bg-green-600 rounded-full inline-block shadow-sm"></span>
                             <span>Eco Green</span>
                         </button>
-                        <button onclick="setSystemTheme('red')" class="flex items-center space-x-2 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-sm font-semibold text-gray-700">
-                            <span class="h-4 w-4 bg-red-500 rounded-full inline-block shadow-sm"></span>
+                        <button onclick="setSystemTheme('red')" class="flex items-center justify-center sm:justify-start space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-xs sm:text-sm font-semibold text-gray-700">
+                            <span class="h-3.5 w-3.5 bg-red-500 rounded-full inline-block shadow-sm"></span>
                             <span>Critical Red</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- BACKUP CONTROL UTILITY PANEL -->
-                <div class="p-5 rounded-xl border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-slate-50 to-white">
+                <div class="p-4 sm:p-5 rounded-xl border border-gray-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-gradient-to-r from-slate-50 to-white">
                     <div class="flex items-center space-x-3">
-                        <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg"><i class="fa-solid fa-database text-lg"></i></div>
+                        <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-database text-base sm:text-lg"></i></div>
                         <div>
-                            <h3 class="text-sm font-bold text-gray-900">Local Database Safety Backups</h3>
-                            <p class="text-xs text-gray-500">Download a hard JSON file of your active configuration and PM history to secure against browser data loss.</p>
+                            <h3 class="text-xs sm:text-sm font-bold text-gray-900">Local Database Safety Backups</h3>
+                            <p class="text-[11px] sm:text-xs text-gray-500">Download a hard JSON file of your configuration traces to protect system data logs.</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                        <button onclick="exportDatabaseBackup()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg transition flex items-center shadow-sm">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 justify-end w-full sm:w-auto">
+                        <button onclick="exportDatabaseBackup()" class="w-full sm:w-auto justify-center bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2.5 rounded-lg transition flex items-center shadow-sm">
                             <i class="fa-solid fa-download mr-1.5"></i>Export Backup
                         </button>
-                        <label class="bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 text-xs font-bold px-3 py-2 rounded-lg cursor-pointer transition flex items-center shadow-sm">
+                        <label class="w-full sm:w-auto justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 text-xs font-bold px-3 py-2.5 rounded-lg cursor-pointer transition flex items-center shadow-sm">
                             <i class="fa-solid fa-upload mr-1.5"></i>Restore Backup
                             <input type="file" id="import-backup-file" accept=".json" onchange="importDatabaseBackup(event)" class="hidden">
                         </label>
@@ -460,7 +503,7 @@
 
     <!-- FLOATING FOOTER STATUS -->
     <footer class="bg-white border-t border-gray-200 text-center py-4 text-xs text-gray-400 font-medium mt-12">
-        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
             <span>&copy; 2026 Astro Development. Local Data Architecture Active.</span>
             <span class="flex items-center text-green-600 font-semibold"><span class="h-2 w-2 bg-green-500 rounded-full inline-block mr-1.5 animate-ping"></span> All Systems Functional</span>
         </div>
@@ -529,6 +572,20 @@
                 if (e.key === 'Enter') verifyPinCode();
             });
         });
+
+        /* MOBILE DRAWER LAYER NAVIGATION CONTROLS */
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('mobile-sidebar-container');
+            const panel = sidebar.querySelector('div:nth-child(2)');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                setTimeout(() => { panel.classList.remove('-translate-x-full'); }, 10);
+            } else {
+                panel.classList.add('-translate-x-full');
+                setTimeout(() => { sidebar.classList.add('hidden'); }, 300);
+            }
+        }
 
         /* SECURITY TERMINAL CORE LOGIC FUNCTIONS */
         function checkLockoutState() {
@@ -610,13 +667,19 @@
         function applyThemeClasses() {
             const header = document.getElementById('site-header');
             const icon = document.getElementById('header-logo-icon');
+            const sidebarIcon = document.getElementById('sidebar-logo-icon');
+            const sidebarPanel = document.querySelector('#mobile-sidebar-container div:nth-child(2)');
             const theme = themeConfig[currentTheme];
 
             // 1. Refresh global header elements
             header.className = `bg-slate-800 text-white shadow-md border-b-4 ${theme.border}`;
             icon.className = `fa-solid fa-gears text-3xl animate-pulse ${theme.text}`;
+            
+            // 2. Refresh active side-drawer borders/icons
+            sidebarPanel.className = `fixed inset-y-0 left-0 w-72 bg-slate-800 text-white flex flex-col shadow-2xl border-r-4 ${theme.border} transform -translate-x-full transition-transform duration-300 ease-in-out`;
+            sidebarIcon.className = `fa-solid fa-gears text-2xl animate-pulse ${theme.text}`;
 
-            // 2. Refresh active views and tracking buttons
+            // 3. Refresh active views and tracking buttons
             switchView(currentView);
         }
 
@@ -639,7 +702,6 @@
             const backupPayload = {
                 version: "2026.2",
                 exportedAt: new Date().toISOString(),
-                // Include terminal security configuration in the backup envelope
                 sitePin: sitePin, 
                 pmDatabase: pmDatabase,
                 archiveDatabase: archiveDatabase
@@ -669,7 +731,6 @@
                     if (importedData.pmDatabase && importedData.archiveDatabase) {
                         if (confirm("Are you sure you want to restore this backup? This will overwrite your current active configurations, archive sets, and terminal PIN settings completely.")) {
                             
-                            // DATA SANITIZATION & MIGRATION LAYER
                             const sanitizeRecord = (pm) => ({
                                 id: pm.id || Date.now().toString() + Math.random().toString(36).substr(2, 5),
                                 asset: pm.asset || 'Unknown Asset',
@@ -693,15 +754,13 @@
                                 })
                             });
 
-                            // Restore core database structures
                             pmDatabase = importedData.pmDatabase.map(sanitizeRecord);
                             archiveDatabase = importedData.archiveDatabase.map(sanitizeRecord);
                             
-                            // Restore and apply security configurations safely
                             if (importedData.sitePin && /^\d{4}$/.test(importedData.sitePin)) {
                                 sitePin = importedData.sitePin;
                                 localStorage.setItem('pulsar_site_pin', sitePin);
-                                isLocked = true; // Lock terminal to protect newly imported records
+                                isLocked = true; 
                             } else {
                                 sitePin = null;
                                 isLocked = false;
@@ -739,15 +798,22 @@
 
             const theme = themeConfig[currentTheme];
 
-            // Reset standard button state styling dynamically
+            // 1. Reset Standard Desktop Nav Bar Buttons
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.className = "nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/5";
             });
+            const targetDesktopBtn = document.getElementById(`btn-nav-${targetViewId}`);
+            if (targetDesktopBtn) {
+                targetDesktopBtn.className = `nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 ${theme.bg} ${theme.textActive} shadow`;
+            }
 
-            // Handle injection of colors on active tab choice selection
-            const targetBtn = document.getElementById(`btn-nav-${targetViewId}`);
-            if (targetBtn) {
-                targetBtn.className = `nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 ${theme.bg} ${theme.textActive} shadow`;
+            // 2. Reset Responsive Side-Drawer Drawer Buttons
+            document.querySelectorAll('.side-nav-btn').forEach(btn => {
+                btn.className = "side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/40";
+            });
+            const targetSidebarBtn = document.getElementById(`btn-side-${targetViewId}`);
+            if (targetSidebarBtn) {
+                targetSidebarBtn.className = `side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200 ${theme.bg} ${theme.textActive} shadow-lg`;
             }
 
             if (targetViewId === 'scheduler') {
@@ -771,7 +837,7 @@
                     const targetDate = info.event.startStr;
 
                     if (isRecurrence) {
-                        instantiateFuturePM(pmId, targetDate);
+                        insturrenceFuturePM(pmId, targetDate);
                     } else {
                         editPM(pmId);
                     }
@@ -826,6 +892,7 @@
                     <td class="p-4">${statusBadge}</td>
                     <td class="p-4 text-right space-x-1" onclick="event.stopPropagation()">
                         <button onclick="archiveDirectly('${pm.id}')" class="text-purple-600 hover:text-purple-900 font-semibold p-1.5 rounded hover:bg-purple-50 text-xs" title="Instant Move to Archive"><i class="fa-solid fa-box-archive text-sm"></i></button>
+                        <button onclick="duplicatePM('${pm.id}')" class="text-amber-600 hover:text-amber-900 font-semibold p-1.5 rounded hover:bg-amber-50 text-xs" title="Duplicate Specification Sheet"><i class="fa-solid fa-copy text-sm"></i></button>
                         <button onclick="editPM('${pm.id}')" class="text-blue-600 hover:text-blue-900 font-semibold p-1.5 rounded hover:bg-blue-50 text-xs" title="Modify PM Properties"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
                         <button onclick="deletePM('${pm.id}', false)" class="text-red-500 hover:text-red-800 font-semibold p-1.5 rounded hover:bg-red-50 text-xs" title="Purge Record"><i class="fa-solid fa-trash text-sm"></i></button>
                     </td>
@@ -950,6 +1017,42 @@
             editPM(id, true);
         }
 
+        /* DYNAMIC DUPLICATION LOGIC PROCESSOR */
+        function duplicatePM(id) {
+            const originPm = pmDatabase.find(p => p.id === id);
+            if (!originPm) return;
+
+            // Deep clone all primary keys and checklists to prevent mutations
+            document.getElementById('builder-form-title').innerText = "Confirm Duplicated Sheet Parameters";
+            document.getElementById('edit-pm-id').value = ''; // Empty string forces a fresh generation key on commit
+            
+            document.getElementById('form-asset').value = originPm.asset;
+            document.getElementById('form-code').value = `${originPm.code}-COPY`;
+            document.getElementById('form-frequency').value = originPm.frequency;
+            document.getElementById('form-title').value = originPm.title;
+            document.getElementById('form-date').value = originPm.date; 
+            document.getElementById('form-technician').value = originPm.technician;
+            document.getElementById('form-status').value = originPm.status; 
+            document.getElementById('form-notes').value = originPm.notes || '';
+
+            const container = document.getElementById('checklist-builder-container');
+            container.innerHTML = '';
+            
+            if (originPm.tasks && originPm.tasks.length > 0) {
+                originPm.tasks.forEach(task => {
+                    addChecklistItem({
+                        text: task.text || '',
+                        checked: task.checked || false,
+                        condition: task.condition || ''
+                    });
+                });
+            }
+
+            attachFormListeners();
+            updateLiveDocPreview();
+            switchView('builder');
+        }
+
         function instantiateFuturePM(id, targetDate) {
             const templatePm = pmDatabase.find(p => p.id === id) || archiveDatabase.find(p => p.id === id);
             if (!templatePm) return;
@@ -1034,7 +1137,7 @@
                 <span class="text-xs font-mono text-gray-400 font-bold px-1">${index + 1}</span>
                 <input type="checkbox" ${taskObj.checked ? 'checked' : ''} class="task-check w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
                 <input type="text" value="${escapeHtml(taskObj.text)}" placeholder="Step details..." class="task-input flex-grow px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none">
-                <input type="text" value="${escapeHtml(taskObj.condition || '')}" placeholder="Value / Obs" class="task-condition w-24 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none">
+                <input type="text" value="${escapeHtml(taskObj.condition || '')}" placeholder="Value / Obs" class="task-condition w-20 sm:w-24 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none">
                 <button type="button" onclick="this.parentElement.remove(); updateStepIndices(); updateLiveDocPreview();" class="text-red-500 hover:text-red-700 text-xs px-1"><i class="fa-solid fa-xmark"></i></button>
             `;
             container.appendChild(div);

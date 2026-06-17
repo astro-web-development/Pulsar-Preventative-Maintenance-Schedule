@@ -12,6 +12,56 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- FullCalendar for industrial-strength calendar viewing and scheduling -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    
+    <!-- Google Fonts: Import "Caveat" for an authentic DocuSign-style cursive signature -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
+
+    <!-- CSS Print Media Queries to ensure a flawless physical page layout -->
+    <style>
+        @media print {
+            /* Hide UI controls, layouts, headers, sidebars and footers completely */
+            #site-header, main > section:not(#view-builder), #view-builder > div:first-child, footer, .lg\:col-span-7 > div:first-child, .no-print {
+                display: none !important;
+            }
+            /* Reset the main layouts to full width without bounds */
+            body, main, #view-builder, .lg\:col-span-7 {
+                background: white !important;
+                color: black !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
+            }
+            /* Strip container card styles off the document card for printing and force fluid responsiveness */
+            #pm-pdf-document {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                min-inline-size: 0 !important;
+            }
+            /* Reset wrappers that force desktop widths on the print layout */
+            .overflow-x-auto, .lg\:col-span-7 {
+                overflow: visible !important;
+                min-width: 0 !important;
+            }
+            /* Prevent large tables or content chunks from clipping unexpectedly */
+            img, table, tr, td {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Apply signature font script style */
+        .signature-script-font {
+            font-family: 'Caveat', cursive, sans-serif;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
 
@@ -35,12 +85,9 @@
         </div>
     </div>
 
-    <!-- MOBILE SIDEBAR DRAWER MENU (Hidden on Desktop via lg:hidden) -->
+    <!-- MOBILE SIDEBAR DRAWER MENU -->
     <div id="mobile-sidebar-container" class="fixed inset-0 z-40 hidden lg:hidden" role="dialog" aria-modal="true">
-        <!-- Backdrop Backdrop Overlay -->
         <div onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
-        
-        <!-- Sidebar Panel Element -->
         <div class="fixed inset-y-0 left-0 w-72 bg-slate-800 text-white flex flex-col shadow-2xl border-r-4 border-yellow-500 transform transition-transform duration-300 ease-in-out">
             <div class="p-5 border-b border-slate-700 flex items-center justify-between">
                 <div class="flex items-center space-x-2">
@@ -77,8 +124,6 @@
     <!-- TOP HEADER / NAVIGATION -->
     <header id="site-header" class="bg-slate-800 text-white shadow-md border-b-4 border-yellow-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            
-            <!-- Logo Section Area -->
             <div class="flex items-center space-x-3">
                 <i id="header-logo-icon" class="fa-solid fa-gears text-yellow-400 text-3xl animate-pulse"></i>
                 <div>
@@ -86,13 +131,9 @@
                     <p class="text-[10px] sm:text-xs text-slate-400 font-medium">Industrial Preventative Maintenance Engine</p>
                 </div>
             </div>
-
-            <!-- Hamburger Button (Visible ONLY on mobile/tablet viewport layout grids) -->
             <button onclick="toggleMobileSidebar()" class="lg:hidden bg-slate-900/60 hover:bg-slate-900 border border-slate-700 p-2.5 rounded-lg transition text-yellow-400 focus:outline-none">
                 <i class="fa-solid fa-bars text-xl block"></i>
             </button>
-
-            <!-- Standard Horizontal Desktop Navbar (Hidden on Mobile via hidden lg:flex) -->
             <nav class="hidden lg:flex space-x-2 bg-slate-900/50 p-1 rounded-lg border border-slate-700">
                 <button onclick="switchView('dashboard')" id="btn-nav-dashboard" class="nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200">
                     <i class="fa-solid fa-chart-line mr-2"></i>Dashboard
@@ -118,7 +159,6 @@
         
         <!-- 1. DASHBOARD VIEW -->
         <section id="view-dashboard" class="space-y-6">
-            <!-- Summary Insights Grid -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
                 <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border-l-4 border-blue-500 flex items-center justify-between">
                     <div>
@@ -150,7 +190,7 @@
                 </div>
             </div>
 
-            <!-- Master Equipment / PM Registry Table Wrapper -->
+            <!-- Master Registry Table Wrapper -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="p-4 sm:p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/70">
                     <div>
@@ -175,14 +215,12 @@
                                 <th class="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="pm-table-body" class="divide-y divide-gray-100 text-sm">
-                            <!-- Dynamic Injection Area -->
-                        </tbody>
+                        <tbody id="pm-table-body" class="divide-y divide-gray-100 text-sm"></tbody>
                     </table>
                     <div id="no-data-view" class="hidden p-8 sm:p-12 text-center text-gray-400">
                         <i class="fa-solid fa-toolbox text-4xl sm:text-5xl mb-3 block text-gray-300"></i>
                         <span class="font-medium text-base text-gray-500">No Active PM Profiles running.</span>
-                        <p class="text-xs text-gray-400 mt-1">All entries have either been handled, cleared, or transitioned into historical logs.</p>
+                        <p class="text-xs text-gray-400 mt-1">All entries have handled or archived transitions.</p>
                     </div>
                 </div>
             </div>
@@ -194,7 +232,7 @@
                 <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-100 pb-3">
                     <div>
                         <h2 class="text-base sm:text-lg font-bold text-gray-900">Dynamic Production Calendar</h2>
-                        <p class="text-xs sm:text-sm text-gray-500">Click an event to edit or log a unique future instance sheet layout.</p>
+                        <p class="text-xs sm:text-sm text-gray-500">Click an event to log unique instance updates.</p>
                     </div>
                     <span class="text-xs bg-slate-100 px-2.5 py-1 text-slate-600 rounded border border-slate-200 font-mono">Dynamic Dispatch Active</span>
                 </div>
@@ -210,7 +248,7 @@
             <div class="lg:col-span-5 bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
                 <div class="border-b border-gray-100 pb-3">
                     <h2 id="builder-form-title" class="text-base sm:text-lg font-bold text-gray-900">Define PM Parameters</h2>
-                    <p class="text-xs text-gray-500">Update values to render down to standard professional physical sheets.</p>
+                    <p class="text-xs text-gray-500">Update values to render standard professional physical sheets.</p>
                 </div>
 
                 <form id="pm-form" class="space-y-4" onsubmit="savePM(event)">
@@ -266,8 +304,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Field Maintenance Notes / Remarks</label>
-                        <textarea id="form-notes" rows="3" placeholder="Enter continuous engineering notes, lubrication levels, part adjustments, or hardware anomalies..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"></textarea>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Maintenance Notes / Remarks</label>
+                        <textarea id="form-notes" rows="3" placeholder="Enter PM notes..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"></textarea>
                     </div>
 
                     <!-- Task Verification Step Injector -->
@@ -278,8 +316,29 @@
                                 <i class="fa-solid fa-plus-circle mr-1"></i>Append Row
                             </button>
                         </div>
-                        <div id="checklist-builder-container" class="space-y-2 max-h-56 overflow-y-auto pr-1">
-                            <!-- Input rows injected via JS -->
+                        <div id="checklist-builder-container" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <!-- DOCUSIGN-STYLE SIGNATURE INPUT FIELDS -->
+                    <div class="border-t border-gray-100 pt-4 space-y-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wide text-gray-700"><i class="fa-solid fa-file-signature mr-1 text-slate-500"></i>DocuSign Digital Signatures</h4>
+                        
+                        <!-- Technician Typed Box -->
+                        <div class="space-y-1">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase">Type Full Name to Sign (Technician)</label>
+                            <div class="relative">
+                                <input type="text" id="form-tech-sig" placeholder="Type name to sign..." class="w-full pl-3 pr-24 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <span class="signature-script-font absolute right-3 top-1.5 text-blue-600 font-bold text-lg select-none pointer-events-none tracking-wide" id="preview-tech-sig-badge"></span>
+                            </div>
+                        </div>
+
+                        <!-- Supervisor Typed Box -->
+                        <div class="space-y-1">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase">Type Full Name to Sign (Operations Supervisor)</label>
+                            <div class="relative">
+                                <input type="text" id="form-supervisor-sig" placeholder="Type name to authorize..." class="w-full pl-3 pr-24 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <span class="signature-script-font absolute right-3 top-1.5 text-blue-600 font-bold text-lg select-none pointer-events-none tracking-wide" id="preview-supervisor-sig-badge"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -298,9 +357,14 @@
             <div class="lg:col-span-7 space-y-4 overflow-x-auto w-full">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <span class="text-[10px] sm:text-xs font-bold uppercase text-gray-400 tracking-widest"><i class="fa-solid fa-eye mr-1"></i> ISO 9001 Compliant Document Live-Preview</span>
-                    <button onclick="downloadPDF()" class="w-full sm:w-auto justify-center bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center transition">
-                        <i class="fa-solid fa-file-pdf mr-2 text-sm"></i>Export Document as PDF
-                    </button>
+                    <div class="flex space-x-2 w-full sm:w-auto">
+                        <button onclick="printSheet()" class="w-full sm:w-auto justify-center bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center transition">
+                            <i class="fa-solid fa-print mr-2 text-sm"></i>Print Document
+                        </button>
+                        <button onclick="downloadPDF()" class="w-full sm:w-auto justify-center bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center transition">
+                            <i class="fa-solid fa-file-pdf mr-2 text-sm"></i>Export PDF
+                        </button>
+                    </div>
                 </div>
 
                 <div class="min-w-[768px] lg:min-w-0 bg-white rounded-xl shadow-xl border border-gray-300 p-4 sm:p-8 max-w-[210mm] mx-auto" id="pm-pdf-document">
@@ -336,7 +400,7 @@
                     </div>
 
                     <div class="mt-6">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded mb-3 border-l-4 border-slate-500">Prescribed Technical Protocols</h4>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded mb-3 border-l-4 border-slate-500">Prescribed Maintenance Protocols</h4>
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="border-b-2 border-gray-300 text-gray-500 uppercase tracking-wide font-bold">
@@ -346,26 +410,33 @@
                                     <th class="pb-2 w-28 text-center">Condition Value</th>
                                 </tr>
                             </thead>
-                            <tbody id="pdf-tasks-body" class="divide-y divide-gray-200">
-                                <!-- Live structural lines -->
-                            </tbody>
+                            <tbody id="pdf-tasks-body" class="divide-y divide-gray-200"></tbody>
                         </table>
                     </div>
 
                     <div class="mt-6">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded mb-2 border-l-4 border-slate-500">Technical Field Notes & Remarks</h4>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1.5 rounded mb-2 border-l-4 border-slate-500">Maintenance Notes & Remarks</h4>
                         <div id="pdf-notes-body" class="p-3 bg-gray-50 border border-gray-200 rounded text-xs min-h-[60px] text-gray-700 whitespace-pre-wrap italic font-mono">---</div>
                     </div>
 
                     <div class="mt-10 pt-6 border-t border-dashed border-gray-300 grid grid-cols-2 gap-8 text-[11px]">
                         <div>
-                            <div class="mb-4 text-gray-500 font-medium">I verify that the above tasks were thoroughly executed in compliance with safety lock-out/tag-out regulations.</div>
-                            <div class="border-b border-gray-400 h-6 w-full"></div>
+                            <div class="mb-2 text-gray-500 font-medium">I verify that the above tasks were thoroughly executed in compliance with safety lock-out/tag-out regulations.</div>
+                            <div class="border-b border-gray-400 min-h-[48px] w-full flex items-center justify-start p-1 bg-slate-50/50 rounded relative">
+                                <!-- DocuSign Stamp ID Badge Graphics -->
+                                <div id="tech-stamp-graphic" class="absolute right-2 top-1 text-[7px] text-gray-400 font-mono uppercase tracking-tighter hidden">Digitally Signed via Pulsar App</div>
+                                <span id="pdf-tech-sig-output" class="signature-script-font text-2xl text-blue-700 pl-3 leading-none select-none tracking-wide"></span>
+                                <span id="pdf-tech-sig-placeholder" class="text-gray-300 font-mono text-[10px] tracking-widest uppercase pl-2">No Signature Recorded</span>
+                            </div>
                             <span class="text-gray-400 font-semibold uppercase text-[9px] mt-1 block">Technician Signature / Date</span>
                         </div>
                         <div>
-                            <div class="mb-4 text-gray-500 font-medium">Sign-off receipt validation for record insertion into continuous manufacturing logs.</div>
-                            <div class="border-b border-gray-400 h-6 w-full"></div>
+                            <div class="mb-2 text-gray-500 font-medium">Sign-off receipt validation for record insertion into manufacturing logs.</div>
+                            <div class="border-b border-gray-400 min-h-[48px] w-full flex items-center justify-start p-1 bg-slate-50/50 rounded relative">
+                                <div id="supervisor-stamp-graphic" class="absolute right-2 top-1 text-[7px] text-gray-400 font-mono uppercase tracking-tighter hidden">Authorized State Saved</div>
+                                <span id="pdf-supervisor-sig-output" class="signature-script-font text-2xl text-blue-700 pl-3 leading-none select-none tracking-wide"></span>
+                                <span id="pdf-supervisor-sig-placeholder" class="text-gray-300 font-mono text-[10px] tracking-widest uppercase pl-2">No Authorization Sign-off</span>
+                            </div>
                             <span class="text-gray-400 font-semibold uppercase text-[9px] mt-1 block">Operations Supervisor Validation Signature</span>
                         </div>
                     </div>
@@ -400,14 +471,11 @@
                                 <th class="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="archive-table-body" class="divide-y divide-gray-100 text-sm">
-                            <!-- Archived Items injected here -->
-                        </tbody>
+                        <tbody id="archive-table-body" class="divide-y divide-gray-100 text-sm"></tbody>
                     </table>
                     <div id="no-archive-view" class="hidden p-8 sm:p-12 text-center text-gray-400">
                         <i class="fa-solid fa-box-open text-4xl sm:text-5xl mb-3 block text-gray-300"></i>
                         <span class="font-medium text-base text-gray-500">Historical Vault Empty.</span>
-                        <p class="text-xs text-gray-400 mt-1">When an operation sheet transitions into "Completed OK" status, it clears the live desk into this location.</p>
                     </div>
                 </div>
             </div>
@@ -417,8 +485,7 @@
         <section id="view-admin" class="hidden space-y-6">
             <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
                 <div class="border-b border-gray-200 pb-4">
-                    <h2 class="text-base sm:text-lg font-bold text-gray-900"><i class="fa-solid fa-user-gear text-slate-700 mr-2"></i>Administrative System Control Panel</h2>
-                    <p class="text-xs sm:text-sm text-gray-500">Manage internal configuration states, framework settings, and core application data.</p>
+                    <h2 class="text-base sm:text-lg font-bold text-gray-900"><i class="fa-solid fa-user-gear text-slate-700 mr-2"></i>Administrative Control Panel</h2>
                 </div>
 
                 <!-- TERMINAL SECURITY CONFIGURATION PANEL -->
@@ -427,73 +494,45 @@
                         <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-shield-halved text-base sm:text-lg"></i></div>
                         <div>
                             <h3 class="text-xs sm:text-sm font-bold text-gray-900">Security PIN Lockout Control</h3>
-                            <p class="text-[11px] sm:text-xs text-gray-500">Require a 4-digit numeric access code to display operational views on application start.</p>
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-                        <div class="w-full sm:w-auto">
-                            <input type="password" id="admin-pin-set" maxlength="4" placeholder="New 4-Digit PIN" class="w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none tracking-widest text-center font-bold">
-                        </div>
+                        <input type="password" id="admin-pin-set" maxlength="4" placeholder="New 4-Digit PIN" class="w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-lg text-sm tracking-widest text-center font-bold">
                         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                            <button onclick="savePinCode()" class="w-full sm:w-auto justify-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition shadow-sm flex items-center">
-                                <i class="fa-solid fa-key mr-1.5"></i>Commit PIN
-                            </button>
-                            <button id="btn-disable-pin" onclick="disablePinCode()" class="w-full sm:w-auto justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold px-4 py-2.5 rounded-lg transition hidden flex items-center">
-                                <i class="fa-solid fa-unlock mr-1.5"></i>Disable PIN
-                            </button>
-                            <button id="btn-lock-now" onclick="lockSiteManually()" class="w-full sm:w-auto justify-center bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 text-xs font-bold px-4 py-2.5 rounded-lg transition hidden flex items-center">
-                                <i class="fa-solid fa-lock mr-1.5"></i>Lock Terminal Now
-                            </button>
+                            <button onclick="savePinCode()" class="bg-blue-600 text-white text-xs font-bold px-4 py-2.5 rounded-lg flex items-center justify-center"><i class="fa-solid fa-key mr-1.5"></i>Commit PIN</button>
+                            <button id="btn-disable-pin" onclick="disablePinCode()" class="bg-gray-100 text-gray-700 text-xs font-semibold px-4 py-2.5 rounded-lg hidden flex items-center justify-center"><i class="fa-solid fa-unlock mr-1.5"></i>Disable PIN</button>
+                            <button id="btn-lock-now" onclick="lockSiteManually()" class="bg-red-50 text-red-600 border border-red-200 text-xs font-bold px-4 py-2.5 rounded-lg hidden flex items-center justify-center"><i class="fa-solid fa-lock mr-1.5"></i>Lock Terminal</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- SECONDARY SITE ACCENT THEME COLOR PICKER -->
+                <!-- SYSTEM BRANDING THEME SELECTOR -->
                 <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-white space-y-3">
                     <div class="flex items-center space-x-3">
                         <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-palette text-base sm:text-lg"></i></div>
                         <div>
-                            <h3 class="text-xs sm:text-sm font-bold text-gray-900">Application Secondary Theme Color</h3>
-                            <p class="text-[11px] sm:text-xs text-gray-500">Select an alternate branding color for active navigation tabs, header borders, and operational accents.</p>
+                            <h3 class="text-xs sm:text-sm font-bold text-gray-900">Branding Accent Color</h3>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pt-2">
-                        <button onclick="setSystemTheme('yellow')" class="flex items-center justify-center sm:justify-start space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-xs sm:text-sm font-semibold text-gray-700">
-                            <span class="h-3.5 w-3.5 bg-yellow-500 rounded-full inline-block shadow-sm"></span>
-                            <span>Industrial Yellow</span>
-                        </button>
-                        <button onclick="setSystemTheme('blue')" class="flex items-center justify-center sm:justify-start space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-xs sm:text-sm font-semibold text-gray-700">
-                            <span class="h-3.5 w-3.5 bg-blue-600 rounded-full inline-block shadow-sm"></span>
-                            <span>Corporate Blue</span>
-                        </button>
-                        <button onclick="setSystemTheme('green')" class="flex items-center justify-center sm:justify-start space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-xs sm:text-sm font-semibold text-gray-700">
-                            <span class="h-3.5 w-3.5 bg-green-600 rounded-full inline-block shadow-sm"></span>
-                            <span>Eco Green</span>
-                        </button>
-                        <button onclick="setSystemTheme('red')" class="flex items-center justify-center sm:justify-start space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition text-xs sm:text-sm font-semibold text-gray-700">
-                            <span class="h-3.5 w-3.5 bg-red-500 rounded-full inline-block shadow-sm"></span>
-                            <span>Critical Red</span>
-                        </button>
+                        <button onclick="setSystemTheme('yellow')" class="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-700"><span class="h-3.5 w-3.5 bg-yellow-500 rounded-full shadow-sm"></span><span>Industrial Yellow</span></button>
+                        <button onclick="setSystemTheme('blue')" class="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-700"><span class="h-3.5 w-3.5 bg-blue-600 rounded-full shadow-sm"></span><span>Corporate Blue</span></button>
+                        <button onclick="setSystemTheme('green')" class="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-700"><span class="h-3.5 w-3.5 bg-green-600 rounded-full shadow-sm"></span><span>Eco Green</span></button>
+                        <button onclick="setSystemTheme('red')" class="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-700"><span class="h-3.5 w-3.5 bg-red-500 rounded-full shadow-sm"></span><span>Critical Red</span></button>
                     </div>
                 </div>
 
-                <!-- BACKUP CONTROL UTILITY PANEL -->
+                <!-- DATABASE PANEL -->
                 <div class="p-4 sm:p-5 rounded-xl border border-gray-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-gradient-to-r from-slate-50 to-white">
                     <div class="flex items-center space-x-3">
                         <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-database text-base sm:text-lg"></i></div>
                         <div>
-                            <h3 class="text-xs sm:text-sm font-bold text-gray-900">Local Database Safety Backups</h3>
-                            <p class="text-[11px] sm:text-xs text-gray-500">Download a hard JSON file of your configuration traces to protect system data logs.</p>
+                            <h3 class="text-xs sm:text-sm font-bold text-gray-900">Local Database safety backups</h3>
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 justify-end w-full sm:w-auto">
-                        <button onclick="exportDatabaseBackup()" class="w-full sm:w-auto justify-center bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2.5 rounded-lg transition flex items-center shadow-sm">
-                            <i class="fa-solid fa-download mr-1.5"></i>Export Backup
-                        </button>
-                        <label class="w-full sm:w-auto justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 text-xs font-bold px-3 py-2.5 rounded-lg cursor-pointer transition flex items-center shadow-sm">
-                            <i class="fa-solid fa-upload mr-1.5"></i>Restore Backup
-                            <input type="file" id="import-backup-file" accept=".json" onchange="importDatabaseBackup(event)" class="hidden">
-                        </label>
+                        <button onclick="exportDatabaseBackup()" class="bg-slate-700 text-white text-xs font-bold px-3 py-2.5 rounded-lg flex items-center justify-center shadow-sm"><i class="fa-solid fa-download mr-1.5"></i>Export Backup</button>
+                        <label class="bg-blue-50 text-blue-600 border border-blue-200 text-xs font-bold px-3 py-2.5 rounded-lg cursor-pointer flex items-center justify-center shadow-sm"><i class="fa-solid fa-upload mr-1.5"></i>Restore Backup<input type="file" id="import-backup-file" accept=".json" onchange="importDatabaseBackup(event)" class="hidden"></label>
                     </div>
                 </div>
             </div>
@@ -504,7 +543,7 @@
     <!-- FLOATING FOOTER STATUS -->
     <footer class="bg-white border-t border-gray-200 text-center py-4 text-xs text-gray-400 font-medium mt-12">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-            <span>&copy; 2026 Astro Development. Local Data Architecture Active.</span>
+            <span>&copy; 2026 Astro Development.</span>
             <span class="flex items-center text-green-600 font-semibold"><span class="h-2 w-2 bg-green-500 rounded-full inline-block mr-1.5 animate-ping"></span> All Systems Functional</span>
         </div>
     </footer>
@@ -512,23 +551,21 @@
     <!-- MAIN CORE LOGIC APP SCRIPT -->
     <script>
         let pmDatabase = [
-            { id: "1", asset: "HYD-PRESS-01 (Bay A)", code: "PM-M-101", title: "Main Cylinder Seal & Fluid Quality Check", frequency: "Monthly", date: "2026-06-18", completedDate: null, technician: "D. Vance", status: "Pending", notes: "No external leaks visible at start of shift. Fluid looks clear.", tasks: [{text: "Verify safety LOTO installation rules", checked: true, condition: "OK"}, {text: "Check pressure manifold lines for microscopic fissures", checked: false, condition: "Nominal"}, {text: "Extract fluid sample for particulate contamination index analysis", checked: false, condition: ""}, {text: "Torque main anchor assembly framework pins", checked: false, condition: ""}] },
-            { id: "3", asset: "COOLING-TOWER-B", code: "PM-W-209", title: "Biocide Level Calibration & Fan Drive V-Belt Tension", frequency: "Weekly", date: "2026-06-15", completedDate: null, technician: "K. Patel", status: "Critical", notes: "V-Belt has significant wear. Replacement ordered.", tasks: [{text: "Test electrical grounding potential parameters", checked: true, condition: "0.24 Ohms"}, {text: "Check driving mechanism belt stress indexes", checked: false, condition: "Loose / Frayed"}, {text: "Clean scale accumulation deposits out of top distribution nozzles", checked: true, condition: "Cleared"}] }
+            { id: "1", asset: "HYD-PRESS-01 (Bay A)", code: "PM-M-101", title: "Main Cylinder Seal & Fluid Quality Check", frequency: "Monthly", date: "2026-06-18", completedDate: null, technician: "D. Vance", status: "Pending", notes: "No external leaks visible at start of shift. Fluid looks clear.", techSig: "", supervisorSig: "", tasks: [{text: "Verify safety LOTO installation rules", checked: true, condition: "OK"}, {text: "Check pressure manifold lines for microscopic fissures", checked: false, condition: "Nominal"}, {text: "Extract fluid sample for particulate contamination index analysis", checked: false, condition: ""}, {text: "Torque main anchor assembly framework pins", checked: false, condition: ""}] },
+            { id: "3", asset: "COOLING-TOWER-B", code: "PM-W-209", title: "Biocide Level Calibration & Fan Drive V-Belt Tension", frequency: "Weekly", date: "2026-06-15", completedDate: null, technician: "K. Patel", status: "Critical", notes: "V-Belt has significant wear. Replacement ordered.", techSig: "", supervisorSig: "", tasks: [{text: "Test electrical grounding potential parameters", checked: true, condition: "0.24 Ohms"}, {text: "Check driving mechanism belt stress indexes", checked: false, condition: "Loose / Frayed"}, {text: "Clean scale accumulation deposits out of top distribution nozzles", checked: true, condition: "Cleared"}] }
         ];
 
         let archiveDatabase = [
-            { id: "2", asset: "ROBOT-ARM-09 (Assembly)", code: "PM-E-304", title: "Axis 3-5 Backlash Calibration & Harness Inspection", frequency: "Quarterly", date: "2026-06-12", completedDate: "2026-06-12", technician: "Sarah Jenkins", status: "Completed", notes: "Backlash re-calibrated back to millimetric parameters.", tasks: [{text: "Inspect dynamic umbilical track tracking layout", checked: true, condition: "Pass"}, {text: "Measure kinematic precision clearance tolerances", checked: true, condition: "0.01mm"}, {text: "Flush residual bearing housing grease arrays", checked: true, condition: "Lithium grease"}] }
+            { id: "2", asset: "ROBOT-ARM-09 (Assembly)", code: "PM-E-304", title: "Axis 3-5 Backlash Calibration & Harness Inspection", frequency: "Quarterly", date: "2026-06-12", completedDate: "2026-06-12", technician: "Sarah Jenkins", status: "Completed", notes: "Backlash re-calibrated back to millimetric parameters.", techSig: "Sarah Jenkins", supervisorSig: "Admin Team", tasks: [{text: "Inspect dynamic umbilical track tracking layout", checked: true, condition: "Pass"}, {text: "Measure kinematic precision clearance tolerances", checked: true, condition: "0.01mm"}, {text: "Flush residual bearing housing grease arrays", checked: true, condition: "Lithium grease"}] }
         ];
 
         let calendar = null;
         let currentView = 'dashboard';
         let currentTheme = 'yellow';
         
-        // Security PIN properties
         let sitePin = null;
         let isLocked = false;
 
-        // Palette mapping matrix for structural theme modifications
         const themeConfig = {
             yellow: { border: 'border-yellow-500', text: 'text-yellow-400', bg: 'bg-yellow-500', textActive: 'text-slate-900' },
             blue: { border: 'border-blue-500', text: 'text-blue-400', bg: 'bg-blue-600', textActive: 'text-white' },
@@ -542,32 +579,22 @@
             const savedTheme = localStorage.getItem('pulsar_site_theme');
             const savedPin = localStorage.getItem('pulsar_site_pin');
             
-            if (savedData) {
-                pmDatabase = JSON.parse(savedData);
-            }
-            if (savedArchive) {
-                archiveDatabase = JSON.parse(savedArchive);
-            }
-            if (savedTheme && themeConfig[savedTheme]) {
-                currentTheme = savedTheme;
-            }
-            
-            // Check terminal security parameters
-            if (savedPin) {
-                sitePin = savedPin;
-                isLocked = true;
-            }
+            if (savedData) pmDatabase = JSON.parse(savedData);
+            if (savedArchive) archiveDatabase = JSON.parse(savedArchive);
+            if (savedTheme && themeConfig[savedTheme]) currentTheme = savedTheme;
+            if (savedPin) { sitePin = savedPin; isLocked = true; }
 
             initCalendar();
             applyThemeClasses();
             switchView('dashboard');
             renderAppEngine();
-            
-            // Execute security engine processes
             checkLockoutState();
             updateAdminPinUI();
 
-            // Bind quick verification keystroke check
+            // Setup real-time listeners for the text signature boxes
+            document.getElementById('form-tech-sig').addEventListener('input', updateLiveDocPreview);
+            document.getElementById('form-supervisor-sig').addEventListener('input', updateLiveDocPreview);
+
             document.getElementById('pin-input').addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') verifyPinCode();
             });
@@ -577,7 +604,6 @@
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('mobile-sidebar-container');
             const panel = sidebar.querySelector('div:nth-child(2)');
-            
             if (sidebar.classList.contains('hidden')) {
                 sidebar.classList.remove('hidden');
                 setTimeout(() => { panel.classList.remove('-translate-x-full'); }, 10);
@@ -587,7 +613,7 @@
             }
         }
 
-        /* SECURITY TERMINAL CORE LOGIC FUNCTIONS */
+        /* SECURITY CORE FUNCTIONS */
         function checkLockoutState() {
             const modal = document.getElementById('lockout-modal');
             if (sitePin && isLocked) {
@@ -601,7 +627,6 @@
         function verifyPinCode() {
             const inputVal = document.getElementById('pin-input').value;
             const errorElement = document.getElementById('pin-error');
-            
             if (inputVal === sitePin) {
                 isLocked = false;
                 errorElement.classList.add('hidden');
@@ -617,18 +642,18 @@
         function savePinCode() {
             const pinVal = document.getElementById('admin-pin-set').value;
             if (!/^\d{4}$/.test(pinVal)) {
-                alert("Operation failed. Please supply a valid 4-digit purely numeric PIN code.");
+                alert("Operation failed. Please supply a valid 4-digit numeric PIN code.");
                 return;
             }
             sitePin = pinVal;
             localStorage.setItem('pulsar_site_pin', sitePin);
             document.getElementById('admin-pin-set').value = '';
-            alert("Security PIN status successfully mapped into node local storage properties.");
+            alert("Security PIN mapped into storage.");
             updateAdminPinUI();
         }
 
         function disablePinCode() {
-            if (confirm("Deactivate security protocol layer? The site terminal will default to an open status on subsequent initializations.")) {
+            if (confirm("Deactivate security layer protocol?")) {
                 sitePin = null;
                 isLocked = false;
                 localStorage.removeItem('pulsar_site_pin');
@@ -638,10 +663,7 @@
         }
 
         function lockSiteManually() {
-            if (sitePin) {
-                isLocked = true;
-                checkLockoutState();
-            }
+            if (sitePin) { isLocked = true; checkLockoutState(); }
         }
 
         function updateAdminPinUI() {
@@ -671,15 +693,11 @@
             const sidebarPanel = document.querySelector('#mobile-sidebar-container div:nth-child(2)');
             const theme = themeConfig[currentTheme];
 
-            // 1. Refresh global header elements
             header.className = `bg-slate-800 text-white shadow-md border-b-4 ${theme.border}`;
             icon.className = `fa-solid fa-gears text-3xl animate-pulse ${theme.text}`;
-            
-            // 2. Refresh active side-drawer borders/icons
             sidebarPanel.className = `fixed inset-y-0 left-0 w-72 bg-slate-800 text-white flex flex-col shadow-2xl border-r-4 ${theme.border} transform -translate-x-full transition-transform duration-300 ease-in-out`;
             sidebarIcon.className = `fa-solid fa-gears text-2xl animate-pulse ${theme.text}`;
 
-            // 3. Refresh active views and tracking buttons
             switchView(currentView);
         }
 
@@ -697,22 +715,12 @@
             localStorage.setItem('pulsar_archive_db', JSON.stringify(archiveDatabase));
         }
 
-        /* BACKUP ENGINE FUNCTIONALITIES WITH SECURITY PERSISTENCE */
         function exportDatabaseBackup() {
-            const backupPayload = {
-                version: "2026.2",
-                exportedAt: new Date().toISOString(),
-                sitePin: sitePin, 
-                pmDatabase: pmDatabase,
-                archiveDatabase: archiveDatabase
-            };
-
+            const backupPayload = { version: "2026.2", exportedAt: new Date().toISOString(), sitePin: sitePin, pmDatabase: pmDatabase, archiveDatabase: archiveDatabase };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPayload, null, 2));
             const downloadAnchor = document.createElement('a');
-            const dateStamp = new Date().toISOString().split('T')[0];
-            
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `Pulsar_Backup_${dateStamp}.json`);
+            downloadAnchor.setAttribute("download", `Pulsar_Backup_${new Date().toISOString().split('T')[0]}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -721,18 +729,15 @@
         function importDatabaseBackup(event) {
             const fileReader = new FileReader();
             const targetFile = event.target.files[0];
-
             if (!targetFile) return;
 
             fileReader.onload = function(e) {
                 try {
                     const importedData = JSON.parse(e.target.result);
-                    
                     if (importedData.pmDatabase && importedData.archiveDatabase) {
-                        if (confirm("Are you sure you want to restore this backup? This will overwrite your current active configurations, archive sets, and terminal PIN settings completely.")) {
-                            
+                        if (confirm("Restore this backup? This overwrites current active datasets and configuration configurations.")) {
                             const sanitizeRecord = (pm) => ({
-                                id: pm.id || Date.now().toString() + Math.random().toString(36).substr(2, 5),
+                                id: pm.id || Date.now().toString(),
                                 asset: pm.asset || 'Unknown Asset',
                                 code: pm.code || 'PM-XXXX',
                                 title: pm.title || 'Untitled Workscope',
@@ -742,121 +747,57 @@
                                 status: pm.status || 'Pending',
                                 completedDate: pm.completedDate || null, 
                                 notes: pm.notes || '', 
-                                tasks: (pm.tasks || []).map(t => {
-                                    if (typeof t === 'string') {
-                                        return { text: t, checked: false, condition: '' };
-                                    }
-                                    return {
-                                        text: t.text || '',
-                                        checked: !!t.checked,
-                                        condition: t.condition || '' 
-                                    };
-                                })
+                                techSig: pm.techSig || '',
+                                supervisorSig: pm.supervisorSig || '',
+                                tasks: pm.tasks || []
                             });
 
                             pmDatabase = importedData.pmDatabase.map(sanitizeRecord);
                             archiveDatabase = importedData.archiveDatabase.map(sanitizeRecord);
-                            
-                            if (importedData.sitePin && /^\d{4}$/.test(importedData.sitePin)) {
-                                sitePin = importedData.sitePin;
-                                localStorage.setItem('pulsar_site_pin', sitePin);
-                                isLocked = true; 
-                            } else {
-                                sitePin = null;
-                                isLocked = false;
-                                localStorage.removeItem('pulsar_site_pin');
-                            }
-                            
+                            sitePin = importedData.sitePin || null;
+                            isLocked = !!sitePin;
+
                             saveToStorage();
                             renderAppEngine();
                             updateAdminPinUI();
                             checkLockoutState();
-                            
-                            alert("Database state and security profiles successfully restored from backup package.");
+                            alert("Database state successfully restored.");
                         }
-                    } else {
-                        alert("Invalid file format. The selected JSON does not match a valid Pulsar Pro data profile.");
                     }
-                } catch (err) {
-                    alert("Error parsing backup data file. Ensure it is a valid, uncorrupted backup .json.");
-                }
-                document.getElementById('import-backup-file').value = '';
+                } catch (err) { alert("Error parsing backup data file."); }
             };
             fileReader.readAsText(targetFile);
         }
 
         function switchView(targetViewId) {
             currentView = targetViewId;
-            
             document.getElementById('view-dashboard').classList.add('hidden');
             document.getElementById('view-scheduler').classList.add('hidden');
             document.getElementById('view-builder').classList.add('hidden');
             document.getElementById('view-archive').classList.add('hidden');
             document.getElementById('view-admin').classList.add('hidden');
-            
             document.getElementById(`view-${targetViewId}`).classList.remove('hidden');
 
             const theme = themeConfig[currentTheme];
-
-            // 1. Reset Standard Desktop Nav Bar Buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = "nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/5";
-            });
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = "nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/5");
             const targetDesktopBtn = document.getElementById(`btn-nav-${targetViewId}`);
-            if (targetDesktopBtn) {
-                targetDesktopBtn.className = `nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 ${theme.bg} ${theme.textActive} shadow`;
-            }
+            if (targetDesktopBtn) targetDesktopBtn.className = `nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 ${theme.bg} ${theme.textActive} shadow`;
 
-            // 2. Reset Responsive Side-Drawer Drawer Buttons
-            document.querySelectorAll('.side-nav-btn').forEach(btn => {
-                btn.className = "side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-700/40";
-            });
-            const targetSidebarBtn = document.getElementById(`btn-side-${targetViewId}`);
-            if (targetSidebarBtn) {
-                targetSidebarBtn.className = `side-nav-btn w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center transition-all duration-200 ${theme.bg} ${theme.textActive} shadow-lg`;
-            }
-
-            if (targetViewId === 'scheduler') {
-                setTimeout(() => { calendar.render(); }, 50);
-            }
+            if (targetViewId === 'scheduler') setTimeout(() => { calendar.render(); }, 50);
         }
 
         function initCalendar() {
             const calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,listMonth'
-                },
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
                 themeSystem: 'standard',
-                eventClick: function(info) {
-                    const pmId = info.event.id;
-                    const isRecurrence = info.event.extendedProps.isRecurrenceNode;
-                    const targetDate = info.event.startStr;
-
-                    if (isRecurrence) {
-                        insturrenceFuturePM(pmId, targetDate);
-                    } else {
-                        editPM(pmId);
-                    }
-                },
-                editable: true,
-                eventDrop: function(info) {
-                    updatePMDate(info.event.id, info.event.startStr);
-                },
+                eventClick: function(info) { editPM(info.event.id); },
                 events: []
             });
         }
 
-        function renderAppEngine() {
-            renderTable();
-            renderArchiveTable();
-            renderStats();
-            syncCalendarEvents();
-        }
-
+        function renderAppEngine() { renderTable(); renderArchiveTable(); renderStats(); syncCalendarEvents(); }
         function renderStats() {
             document.getElementById('stat-total').innerText = pmDatabase.length;
             document.getElementById('stat-pending').innerText = pmDatabase.filter(p => p.status === 'Pending').length;
@@ -868,17 +809,13 @@
             const tbody = document.getElementById('pm-table-body');
             const noData = document.getElementById('no-data-view');
             tbody.innerHTML = '';
-
-            if (pmDatabase.length === 0) {
-                noData.classList.remove('hidden');
-                return;
-            }
+            if (pmDatabase.length === 0) { noData.classList.remove('hidden'); return; }
             noData.classList.add('hidden');
 
             pmDatabase.forEach(pm => {
-                let statusBadge = '';
-                if(pm.status === 'Pending') statusBadge = `<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-bold border border-yellow-200"><i class="fa-solid fa-clock mr-1"></i>Scheduled</span>`;
-                if(pm.status === 'Critical') statusBadge = `<span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded font-bold border border-red-200 animate-pulse"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Warning</span>`;
+                let statusBadge = pm.status === 'Pending' 
+                    ? `<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-bold border border-yellow-200">Scheduled</span>`
+                    : `<span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded font-bold border border-red-200 animate-pulse">Warning</span>`;
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition cursor-pointer";
@@ -887,14 +824,13 @@
                     <td class="p-4 font-bold text-slate-900">${escapeHtml(pm.asset)}</td>
                     <td class="p-4 font-medium text-slate-600"><span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-xs mr-2 font-bold">${escapeHtml(pm.code)}</span>${escapeHtml(pm.title)}</td>
                     <td class="p-4 text-xs font-semibold text-slate-500 uppercase">${escapeHtml(pm.frequency)}</td>
-                    <td class="p-4 text-xs font-mono font-medium">${pm.date}</td>
+                    <td class="p-4 text-xs font-mono">${pm.date}</td>
                     <td class="p-4 text-xs font-medium text-slate-700">${escapeHtml(pm.technician)}</td>
                     <td class="p-4">${statusBadge}</td>
                     <td class="p-4 text-right space-x-1" onclick="event.stopPropagation()">
-                        <button onclick="archiveDirectly('${pm.id}')" class="text-purple-600 hover:text-purple-900 font-semibold p-1.5 rounded hover:bg-purple-50 text-xs" title="Instant Move to Archive"><i class="fa-solid fa-box-archive text-sm"></i></button>
-                        <button onclick="duplicatePM('${pm.id}')" class="text-amber-600 hover:text-amber-900 font-semibold p-1.5 rounded hover:bg-amber-50 text-xs" title="Duplicate Specification Sheet"><i class="fa-solid fa-copy text-sm"></i></button>
-                        <button onclick="editPM('${pm.id}')" class="text-blue-600 hover:text-blue-900 font-semibold p-1.5 rounded hover:bg-blue-50 text-xs" title="Modify PM Properties"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
-                        <button onclick="deletePM('${pm.id}', false)" class="text-red-500 hover:text-red-800 font-semibold p-1.5 rounded hover:bg-red-50 text-xs" title="Purge Record"><i class="fa-solid fa-trash text-sm"></i></button>
+                        <button onclick="archiveDirectly('${pm.id}')" class="text-purple-600 hover:text-purple-900 p-1.5 text-xs"><i class="fa-solid fa-box-archive"></i></button>
+                        <button onclick="editPM('${pm.id}')" class="text-blue-600 hover:text-blue-900 p-1.5 text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deletePM('${pm.id}', false)" class="text-red-500 hover:text-red-800 p-1.5 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -903,100 +839,35 @@
 
         function renderArchiveTable() {
             const tbody = document.getElementById('archive-table-body');
-            const noArchive = document.getElementById('no-archive-view');
             tbody.innerHTML = '';
-
-            if (archiveDatabase.length === 0) {
-                noArchive.classList.remove('hidden');
-                return;
-            }
-            noArchive.classList.add('hidden');
+            if (archiveDatabase.length === 0) return;
 
             archiveDatabase.forEach(pm => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-purple-50/40 transition bg-gray-50/40";
+                tr.className = "bg-gray-50/40";
                 tr.innerHTML = `
                     <td class="p-4 font-bold text-slate-700">${escapeHtml(pm.asset)}</td>
                     <td class="p-4 font-medium text-slate-500"><span class="font-mono bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded text-xs mr-2 font-bold">${escapeHtml(pm.code)}</span>${escapeHtml(pm.title)}</td>
                     <td class="p-4 text-xs text-slate-400">${escapeHtml(pm.frequency)}</td>
-                    <td class="p-4 text-xs font-mono text-slate-500">${pm.date}</td>
+                    <td class="p-4 text-xs font-mono">${pm.date}</td>
                     <td class="p-4 text-xs font-mono font-bold text-purple-700">${pm.completedDate || '---'}</td>
                     <td class="p-4 text-xs text-slate-500">${escapeHtml(pm.technician)}</td>
-                    <td class="p-4"><span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold border border-green-200"><i class="fa-solid fa-circle-check mr-1"></i>Pass OK</span></td>
-                    <td class="p-4 text-right space-x-1">
-                        <button onclick="viewArchiveItem('${pm.id}')" class="text-blue-600 hover:text-blue-900 font-semibold p-1.5 rounded hover:bg-blue-50 text-xs" title="Review PDF Document"><i class="fa-solid fa-file-invoice text-sm"></i></button>
-                        <button onclick="deletePM('${pm.id}', true)" class="text-red-400 hover:text-red-700 font-semibold p-1.5 rounded hover:bg-red-50 text-xs" title="Delete Permanent History"><i class="fa-solid fa-trash text-sm"></i></button>
+                    <td class="p-4"><span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold border border-green-200">Pass OK</span></td>
+                    <td class="p-4 text-right">
+                        <button onclick="viewArchiveItem('${pm.id}')" class="text-blue-600 hover:text-blue-900 p-1.5 text-xs"><i class="fa-solid fa-file-invoice"></i></button>
+                        <button onclick="deletePM('${pm.id}', true)" class="text-red-400 hover:text-red-700 p-1.5 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function getRecurringDates(startDateStr, interval) {
-            const dates = [startDateStr];
-            const start = new Date(startDateStr);
-            const limit = new Date(start);
-            limit.setMonth(limit.getMonth() + 12); 
-
-            let current = new Date(start);
-
-            while (true) {
-                if (interval === "Weekly") {
-                    current.setDate(current.getDate() + 7);
-                } else if (interval === "Monthly") {
-                    current.setMonth(current.getMonth() + 1);
-                } else if (interval === "Bi-Monthly") {
-                    current.setMonth(current.getMonth() + 2);
-                } else if (interval === "Quarterly") {
-                    current.setMonth(current.getMonth() + 3);
-                } else if (interval === "Semi-Annually") {
-                    current.setMonth(current.getMonth() + 6);
-                } else if (interval === "Annually") {
-                    current.setFullYear(current.getFullYear() + 1);
-                } else {
-                    break;
-                }
-
-                if (current > limit) break;
-                
-                const yyyy = current.getFullYear();
-                const mm = String(current.getMonth() + 1).padStart(2, '0');
-                const dd = String(current.getDate()).padStart(2, '0');
-                dates.push(`${yyyy}-${mm}-${dd}`);
-            }
-            return dates;
-        }
-
         function syncCalendarEvents() {
             if (!calendar) return;
             calendar.removeAllEvents();
-            
             pmDatabase.forEach(pm => {
-                let color = '#eab308'; 
-                if (pm.status === 'Critical') color = '#ef4444'; 
-
-                const operationalDates = getRecurringDates(pm.date, pm.frequency);
-
-                operationalDates.forEach((instanceDate, index) => {
-                    const isFutureRecurrence = index > 0;
-                    
-                    calendar.addEvent({
-                        id: pm.id,
-                        title: `${isFutureRecurrence ? '🔄 ' : ''}[${pm.code}] ${pm.asset}`,
-                        start: instanceDate,
-                        allDay: true,
-                        backgroundColor: isFutureRecurrence ? adjustColorOpacity(color) : color,
-                        borderColor: color,
-                        textColor: isFutureRecurrence ? '#1e293b' : '#fff',
-                        extendedProps: { isRecurrenceNode: isFutureRecurrence }
-                    });
-                });
+                calendar.addEvent({ id: pm.id, title: `[${pm.code}] ${pm.asset}`, start: pm.date, allDay: true, backgroundColor: pm.status === 'Critical' ? '#ef4444' : '#eab308' });
             });
-        }
-
-        function adjustColorOpacity(hex) {
-            if(hex === '#ef4444') return '#fecaca'; 
-            return '#fef08a'; 
         }
 
         function archiveDirectly(id) {
@@ -1005,88 +876,19 @@
                 let pm = pmDatabase[idx];
                 pm.status = 'Completed';
                 pm.completedDate = new Date().toISOString().split('T')[0]; 
-                pm.tasks.forEach(t => t.checked = true);
                 archiveDatabase.push(pm);
                 pmDatabase.splice(idx, 1);
-                saveToStorage();
-                renderAppEngine();
+                saveToStorage(); renderAppEngine();
             }
         }
 
-        function viewArchiveItem(id) {
-            editPM(id, true);
-        }
-
-        /* DYNAMIC DUPLICATION LOGIC PROCESSOR */
-        function duplicatePM(id) {
-            const originPm = pmDatabase.find(p => p.id === id);
-            if (!originPm) return;
-
-            // Deep clone all primary keys and checklists to prevent mutations
-            document.getElementById('builder-form-title').innerText = "Confirm Duplicated Sheet Parameters";
-            document.getElementById('edit-pm-id').value = ''; // Empty string forces a fresh generation key on commit
-            
-            document.getElementById('form-asset').value = originPm.asset;
-            document.getElementById('form-code').value = `${originPm.code}-COPY`;
-            document.getElementById('form-frequency').value = originPm.frequency;
-            document.getElementById('form-title').value = originPm.title;
-            document.getElementById('form-date').value = originPm.date; 
-            document.getElementById('form-technician').value = originPm.technician;
-            document.getElementById('form-status').value = originPm.status; 
-            document.getElementById('form-notes').value = originPm.notes || '';
-
-            const container = document.getElementById('checklist-builder-container');
-            container.innerHTML = '';
-            
-            if (originPm.tasks && originPm.tasks.length > 0) {
-                originPm.tasks.forEach(task => {
-                    addChecklistItem({
-                        text: task.text || '',
-                        checked: task.checked || false,
-                        condition: task.condition || ''
-                    });
-                });
-            }
-
-            attachFormListeners();
-            updateLiveDocPreview();
-            switchView('builder');
-        }
-
-        function instantiateFuturePM(id, targetDate) {
-            const templatePm = pmDatabase.find(p => p.id === id) || archiveDatabase.find(p => p.id === id);
-            if (!templatePm) return;
-
-            document.getElementById('builder-form-title').innerText = "Instantiate Next Workscope Run";
-            document.getElementById('edit-pm-id').value = ''; 
-            
-            document.getElementById('form-asset').value = templatePm.asset;
-            document.getElementById('form-code').value = `${templatePm.code}-RUN`;
-            document.getElementById('form-frequency').value = templatePm.frequency;
-            document.getElementById('form-title').value = templatePm.title;
-            document.getElementById('form-date').value = targetDate; 
-            document.getElementById('form-technician').value = templatePm.technician;
-            document.getElementById('form-status').value = "Pending"; 
-            document.getElementById('form-notes').value = '';
-
-            const container = document.getElementById('checklist-builder-container');
-            container.innerHTML = '';
-            if (templatePm.tasks && templatePm.tasks.length > 0) {
-                templatePm.tasks.forEach(t => addChecklistItem({text: typeof t === 'string' ? t : t.text, checked: false, condition: ''}));
-            } else {
-                addChecklistItem({text: "Standard Safety Lockout Verification Procedure", checked: false, condition: ''});
-            }
-
-            attachFormListeners();
-            updateLiveDocPreview();
-            switchView('builder');
-        }
+        function viewArchiveItem(id) { editPM(id, true); }
 
         function editPM(id, lookingAtArchive = false) {
             const pm = lookingAtArchive ? archiveDatabase.find(p => p.id === id) : pmDatabase.find(p => p.id === id);
             if (!pm) return;
 
-            document.getElementById('builder-form-title').innerText = lookingAtArchive ? "Review Archive Document Only" : "Revise & Update Master PM";
+            document.getElementById('builder-form-title').innerText = lookingAtArchive ? "Review Archive Document" : "Revise & Update Master PM";
             document.getElementById('edit-pm-id').value = pm.id;
             document.getElementById('form-asset').value = pm.asset;
             document.getElementById('form-code').value = pm.code;
@@ -1096,19 +898,17 @@
             document.getElementById('form-technician').value = pm.technician;
             document.getElementById('form-status').value = pm.status;
             document.getElementById('form-notes').value = pm.notes || '';
+            
+            // Hydrate signature data values back to input text components
+            document.getElementById('form-tech-sig').value = pm.techSig || '';
+            document.getElementById('form-supervisor-sig').value = pm.supervisorSig || '';
 
             window.activeViewingCompletedDate = pm.completedDate || null;
 
             const container = document.getElementById('checklist-builder-container');
             container.innerHTML = '';
             if (pm.tasks && pm.tasks.length > 0) {
-                pm.tasks.forEach(t => {
-                    if(typeof t === 'string') {
-                        addChecklistItem({text: t, checked: false, condition: ''});
-                    } else {
-                        addChecklistItem(t);
-                    }
-                });
+                pm.tasks.forEach(t => addChecklistItem(t));
             } else {
                 addChecklistItem({text: "Standard Safety Lockout Verification Procedure", checked: false, condition: ''});
             }
@@ -1118,53 +918,37 @@
             switchView('builder');
         }
 
-        function updatePMDate(id, newDateStr) {
-            const index = pmDatabase.findIndex(p => p.id === id);
-            if (index !== -1) {
-                pmDatabase[index].date = newDateStr;
-                saveToStorage();
-                renderAppEngine();
-            }
-        }
-
         function addChecklistItem(taskObj = {text: '', checked: false, condition: ''}) {
             const container = document.getElementById('checklist-builder-container');
             const index = container.children.length;
-            
             const div = document.createElement('div');
             div.className = "flex items-center space-x-2 bg-slate-50 p-1.5 rounded border border-gray-200";
             div.innerHTML = `
                 <span class="text-xs font-mono text-gray-400 font-bold px-1">${index + 1}</span>
-                <input type="checkbox" ${taskObj.checked ? 'checked' : ''} class="task-check w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
-                <input type="text" value="${escapeHtml(taskObj.text)}" placeholder="Step details..." class="task-input flex-grow px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none">
-                <input type="text" value="${escapeHtml(taskObj.condition || '')}" placeholder="Value / Obs" class="task-condition w-20 sm:w-24 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none">
-                <button type="button" onclick="this.parentElement.remove(); updateStepIndices(); updateLiveDocPreview();" class="text-red-500 hover:text-red-700 text-xs px-1"><i class="fa-solid fa-xmark"></i></button>
+                <input type="checkbox" ${taskObj.checked ? 'checked' : ''} class="task-check w-4 h-4 text-blue-600 rounded cursor-pointer">
+                <input type="text" value="${escapeHtml(taskObj.text)}" placeholder="Step details..." class="task-input flex-grow px-2 py-1 text-xs border border-gray-300 rounded outline-none">
+                <input type="text" value="${escapeHtml(taskObj.condition || '')}" placeholder="Value / Obs" class="task-condition w-20 sm:w-24 px-2 py-1 text-xs border border-gray-300 rounded outline-none">
+                <button type="button" onclick="this.parentElement.remove(); updateStepIndices(); updateLiveDocPreview();" class="text-red-500 text-xs px-1"><i class="fa-solid fa-xmark"></i></button>
             `;
             container.appendChild(div);
-            
             div.querySelector('.task-check').addEventListener('change', updateLiveDocPreview);
             div.querySelector('.task-input').addEventListener('input', updateLiveDocPreview);
             div.querySelector('.task-condition').addEventListener('input', updateLiveDocPreview);
-            
             updateLiveDocPreview();
         }
 
         function updateStepIndices() {
-            const container = document.getElementById('checklist-builder-container');
-            Array.from(container.children).forEach((child, idx) => {
+            Array.from(document.getElementById('checklist-builder-container').children).forEach((child, idx) => {
                 child.querySelector('span').innerText = idx + 1;
             });
         }
 
         function getChecklistValues() {
-            const rows = document.querySelectorAll('#checklist-builder-container > div');
-            return Array.from(rows).map(row => {
-                return {
-                    text: row.querySelector('.task-input').value.trim(),
-                    checked: row.querySelector('.task-check').checked,
-                    condition: row.querySelector('.task-condition').value.trim()
-                };
-            }).filter(val => val.text !== "");
+            return Array.from(document.querySelectorAll('#checklist-builder-container > div')).map(row => ({
+                text: row.querySelector('.task-input').value.trim(),
+                checked: row.querySelector('.task-check').checked,
+                condition: row.querySelector('.task-condition').value.trim()
+            })).filter(val => val.text !== "");
         }
 
         function openNewPMForm() {
@@ -1173,25 +957,18 @@
             document.getElementById('edit-pm-id').value = '';
             document.getElementById('checklist-builder-container').innerHTML = '';
             document.getElementById('form-notes').value = '';
-            
             document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
             window.activeViewingCompletedDate = null;
             
             addChecklistItem({text: "Perform Lockout/Tagout (LOTO) and verify zero energy state", checked: false, condition: "Verified"});
-            addChecklistItem({text: "Inspect main drive belt tension and check for structural cracking/wear", checked: false, condition: "Deflection mm"});
-            addChecklistItem({text: "Check hydraulic fluid level, operating temperature, and filter status", checked: false, condition: "°C / Level"});
-            addChecklistItem({text: "Lubricate linear guide rails, ball screws, and main bearings", checked: false, condition: "OK / Applied"});
-            addChecklistItem({text: "Clean internal electrical cabinet ventilation filters and cooling fans", checked: false, condition: "Cleaned"});
+            addChecklistItem({text: "Inspect main drive belt tension and check structural health status", checked: false, condition: "Deflection mm"});
             
             attachFormListeners();
             updateLiveDocPreview();
             switchView('builder');
         }
 
-        function cancelEdit() {
-            document.getElementById('pm-form').reset();
-            switchView('dashboard');
-        }
+        function cancelEdit() { document.getElementById('pm-form').reset(); switchView('dashboard'); }
 
         function savePM(e) {
             e.preventDefault();
@@ -1206,6 +983,10 @@
             const notes = document.getElementById('form-notes').value;
             const tasks = getChecklistValues();
 
+            // Store pure input string characters inside active database matrix objects
+            const techSig = document.getElementById('form-tech-sig').value.trim();
+            const supervisorSig = document.getElementById('form-supervisor-sig').value.trim();
+
             let existingPm = pmDatabase.find(p => p.id === id) || archiveDatabase.find(p => p.id === id);
             let finalCompletedDate = existingPm ? (existingPm.completedDate || null) : null;
 
@@ -1215,13 +996,12 @@
                 finalCompletedDate = null;
             }
 
-            const itemPayload = { id: id || Date.now().toString(), asset, code, frequency, title, date, completedDate: finalCompletedDate, technician, status, notes, tasks };
-
+            const itemPayload = { id: id || Date.now().toString(), asset, code, frequency, title, date, completedDate: finalCompletedDate, technician, status, notes, techSig, supervisorSig, tasks };
             pmDatabase = pmDatabase.filter(p => p.id !== id);
             archiveDatabase = archiveDatabase.filter(p => p.id !== id);
 
             if (status === 'Completed') {
-                itemPayload.tasks.forEach(t => t.checked = true); 
+                itemPayload.tasks.forEach(t => t.checked = true);
                 archiveDatabase.push(itemPayload);
                 switchView('archive');
             } else {
@@ -1229,28 +1009,19 @@
                 switchView('dashboard');
             }
 
-            saveToStorage();
-            renderAppEngine();
+            saveToStorage(); renderAppEngine();
         }
 
         function deletePM(id, fromArchive = false) {
-            if(confirm("Confirm deletion? This will permanently erase this PM item configuration trace.")) {
-                if (fromArchive) {
-                    archiveDatabase = archiveDatabase.filter(p => p.id !== id);
-                } else {
-                    pmDatabase = pmDatabase.filter(p => p.id !== id);
-                }
-                saveToStorage();
-                renderAppEngine();
+            if(confirm("Confirm deletion?")) {
+                if (fromArchive) archiveDatabase = archiveDatabase.filter(p => p.id !== id);
+                else pmDatabase = pmDatabase.filter(p => p.id !== id);
+                saveToStorage(); renderAppEngine();
             }
         }
 
         function clearAllArchive() {
-            if(confirm("Warning! Are you sure you want to permanently empty out your entire historical log storage tab? This action cannot be reversed.")) {
-                archiveDatabase = [];
-                saveToStorage();
-                renderAppEngine();
-            }
+            if(confirm("Empty archive?")) { archiveDatabase = []; saveToStorage(); renderAppEngine(); }
         }
 
         function updateLiveDocPreview() {
@@ -1260,7 +1031,7 @@
             const title = document.getElementById('form-title').value || '---';
             const date = document.getElementById('form-date').value || '---';
             const tech = document.getElementById('form-technician').value || '---';
-            const notes = document.getElementById('form-notes').value || 'No diagnostic records or specific field comments provided for this PM.';
+            const notes = document.getElementById('form-notes').value || 'No comments provided.';
 
             document.getElementById('pdf-asset-id').innerText = asset;
             document.getElementById('pdf-doc-code').innerText = code;
@@ -1271,27 +1042,58 @@
             document.getElementById('pdf-notes-body').innerText = notes;
 
             const currentFormStatus = document.getElementById('form-status').value;
-            let displayCompDate = '---';
-            if (currentFormStatus === 'Completed') {
-                displayCompDate = window.activeViewingCompletedDate || new Date().toISOString().split('T')[0];
-            }
-            document.getElementById('pdf-meta-completed-date').innerText = displayCompDate;
+            document.getElementById('pdf-meta-completed-date').innerText = currentFormStatus === 'Completed' ? (window.activeViewingCompletedDate || new Date().toISOString().split('T')[0]) : '---';
 
+            // Extract the typed names from the signature inputs
+            const typedTechSig = document.getElementById('form-tech-sig').value.trim();
+            const typedSupervisorSig = document.getElementById('form-supervisor-sig').value.trim();
+
+            // Update Input box inline badges
+            document.getElementById('preview-tech-sig-badge').innerText = typedTechSig;
+            document.getElementById('preview-supervisor-sig-badge').innerText = typedSupervisorSig;
+
+            // Update Technician Output Section inside PDF Review
+            const techOutput = document.getElementById('pdf-tech-sig-output');
+            const techPlaceholder = document.getElementById('pdf-tech-sig-placeholder');
+            const techStamp = document.getElementById('tech-stamp-graphic');
+            if (typedTechSig.length > 0) {
+                techOutput.innerText = typedTechSig;
+                techOutput.classList.remove('hidden');
+                techStamp.classList.remove('hidden');
+                techPlaceholder.classList.add('hidden');
+            } else {
+                techOutput.classList.add('hidden');
+                techStamp.classList.add('hidden');
+                techPlaceholder.classList.remove('hidden');
+            }
+
+            // Update Supervisor Output Section inside PDF Review
+            const supervisorOutput = document.getElementById('pdf-supervisor-sig-output');
+            const supervisorPlaceholder = document.getElementById('pdf-supervisor-sig-placeholder');
+            const supervisorStamp = document.getElementById('supervisor-stamp-graphic');
+            if (typedSupervisorSig.length > 0) {
+                supervisorOutput.innerText = typedSupervisorSig;
+                supervisorOutput.classList.remove('hidden');
+                supervisorStamp.classList.remove('hidden');
+                supervisorPlaceholder.classList.add('hidden');
+            } else {
+                supervisorOutput.classList.add('hidden');
+                supervisorStamp.classList.add('hidden');
+                supervisorPlaceholder.classList.remove('hidden');
+            }
+
+            // Build out technical protocols lines loop
             const taskBody = document.getElementById('pdf-tasks-body');
             taskBody.innerHTML = '';
-
             const tasks = getChecklistValues();
             if(tasks.length === 0) {
-                taskBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No tasks specified for processing. Add tasks using the control builder panel.</td></tr>`;
+                taskBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No protocols assigned.</td></tr>`;
                 return;
             }
 
             tasks.forEach((task, idx) => {
                 const tr = document.createElement('tr');
-                const checkElement = task.checked 
-                    ? `<i class="fa-solid fa-square-check text-green-600 text-base"></i>`
-                    : `<div class="border border-gray-400 rounded w-5 h-5 mx-auto"></div>`;
-                
+                const checkElement = task.checked ? `<i class="fa-solid fa-square-check text-green-600 text-base"></i>` : `<div class="border border-gray-400 rounded w-5 h-5 mx-auto"></div>`;
                 tr.innerHTML = `
                     <td class="py-2.5 text-center font-mono font-bold text-gray-400">${idx + 1}</td>
                     <td class="py-2.5 font-medium text-slate-800 pr-4">${escapeHtml(task.text)}</td>
@@ -1302,30 +1104,17 @@
             });
         }
 
+        function printSheet() { window.print(); }
         function downloadPDF() {
             const element = document.getElementById('pm-pdf-document');
             const code = document.getElementById('form-code').value || 'PM-DOC';
-            const asset = document.getElementById('form-asset').value || 'ASSET';
-            
-            const opt = {
-                margin:       10,
-                filename:     `PM-Sheet_${code}_${asset.replace(/[^a-z0-9]/gi, '_')}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
+            const opt = { margin: 10, filename: `PM-Sheet_${code}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
             html2pdf().set(opt).from(element).save();
         }
 
         function escapeHtml(text) {
             if (!text) return '';
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
 </body>

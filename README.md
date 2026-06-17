@@ -13,6 +13,7 @@ Pulsar Preventative is an intuitive, single-page web application designed for ma
 *   **ISO 9001 Compliant Live-Preview:** Instantly renders inputs down into standard professional physical documentation, ready for single-click PDF export.
 *   **Historical Document Vault:** Seamlessly transitions completed workspace files away from active logs into a centralized permanent historical repository.
 *   **Administrative Terminal Security:** Features a robust 4-digit PIN lock security layer to restrict unauthorized views, alongside instant JSON database migration backup engines.
+*   **Backup Feature:** Features a robust Backup feature that allows users to backup and import data regularly for safe storage of user data.
 
 ---
 
@@ -30,7 +31,7 @@ This software is built entirely as an agile client-side stack requiring zero ext
 
 ## NOTE
 I recommend only running this LOCALLY, It was not made to be hosted on the web and is not designed to prevent unauthorzied access on the internet, 
-I also recommend regular backups to prevent data loss
+I also recommend regular backups to prevent data loss due to the method used to store your data, you can find the option to backup your data in the admin settings tab.
 
 ---
 

@@ -4,15 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pulsar Preventative Maintenance Scheduler</title>
+    <!-- Tailwind CSS for modern, clean UI styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for clean operational icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for generating beautiful client-side PDFs directly from DOM elements -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- FullCalendar for industrial-strength calendar viewing and scheduling -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     
+    <!-- Google Fonts: Import "Caveat" for an authentic DocuSign-style cursive signature -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght=700&display=swap" rel="stylesheet">
 
+    <!-- CSS Print Media Queries to ensure a flawless physical page layout -->
     <style>
         @media print {
             /* Hide UI controls, layouts, headers, sidebars and footers completely */
@@ -59,6 +65,7 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
 
+    <!-- SECURITY LOCKOUT POPUP OVERLAY MODAL -->
     <div id="lockout-modal" class="fixed inset-0 z-50 bg-slate-900/95 flex items-center justify-center p-4 hidden">
         <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-4 border-red-500 space-y-6">
             <div>
@@ -78,6 +85,7 @@
         </div>
     </div>
 
+    <!-- MOBILE SIDEBAR DRAWER MENU -->
     <div id="mobile-sidebar-container" class="fixed inset-0 z-40 hidden lg:hidden" role="dialog" aria-modal="true">
         <div onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
         <div class="fixed inset-y-0 left-0 w-72 bg-slate-800 text-white flex flex-col shadow-2xl border-r-4 border-yellow-500 transform transition-transform duration-300 ease-in-out">
@@ -113,6 +121,7 @@
         </div>
     </div>
 
+    <!-- TOP HEADER / NAVIGATION -->
     <header id="site-header" class="bg-slate-800 text-white shadow-md border-b-4 border-yellow-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
@@ -145,8 +154,10 @@
         </div>
     </header>
 
+    <!-- MAIN INTERACTIVE HUB CONTAINER -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         
+        <!-- 1. DASHBOARD VIEW -->
         <section id="view-dashboard" class="space-y-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
                 <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border-l-4 border-blue-500 flex items-center justify-between">
@@ -179,6 +190,7 @@
                 </div>
             </div>
 
+            <!-- Master Registry Table Wrapper -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="p-4 sm:p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/70">
                     <div>
@@ -214,6 +226,7 @@
             </div>
         </section>
 
+        <!-- 2. CALENDAR VIEW -->
         <section id="view-scheduler" class="hidden space-y-4">
             <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
                 <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-100 pb-3">
@@ -229,7 +242,9 @@
             </div>
         </section>
 
+        <!-- 3. PM BUILDER & REVISION SHEET -->
         <section id="view-builder" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            <!-- Left inputs / control column -->
             <div class="lg:col-span-5 bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
                 <div class="border-b border-gray-100 pb-3">
                     <h2 id="builder-form-title" class="text-base sm:text-lg font-bold text-gray-900">Define PM Parameters</h2>
@@ -293,6 +308,7 @@
                         <textarea id="form-notes" rows="3" placeholder="Enter PM notes..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"></textarea>
                     </div>
 
+                    <!-- Task Verification Step Injector -->
                     <div class="border-t border-gray-100 pt-4">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
                             <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide">PM Verification Step Checklist</label>
@@ -303,9 +319,11 @@
                         <div id="checklist-builder-container" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
                     </div>
 
+                    <!-- DOCUSIGN-STYLE SIGNATURE INPUT FIELDS -->
                     <div class="border-t border-gray-100 pt-4 space-y-4">
                         <h4 class="text-xs font-bold uppercase tracking-wide text-gray-700"><i class="fa-solid fa-file-signature mr-1 text-slate-500"></i>DocuSign Digital Signatures</h4>
                         
+                        <!-- Technician Typed Box -->
                         <div class="space-y-1">
                             <label class="block text-[11px] font-bold text-gray-500 uppercase">Type Full Name to Sign (Technician)</label>
                             <div class="relative">
@@ -314,6 +332,7 @@
                             </div>
                         </div>
 
+                        <!-- Supervisor Typed Box -->
                         <div class="space-y-1">
                             <label class="block text-[11px] font-bold text-gray-500 uppercase">Type Full Name to Sign (Operations Supervisor)</label>
                             <div class="relative">
@@ -334,6 +353,7 @@
                 </form>
             </div>
 
+            <!-- Right dynamic real-time print preview document block -->
             <div class="lg:col-span-7 space-y-4 overflow-x-auto w-full">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <span class="text-[10px] sm:text-xs font-bold uppercase text-gray-400 tracking-widest"><i class="fa-solid fa-eye mr-1"></i> ISO 9001 Compliant Document Live-Preview</span>
@@ -403,6 +423,7 @@
                         <div>
                             <div class="mb-2 text-gray-500 font-medium">I verify that the above tasks were thoroughly executed in compliance with safety lock-out/tag-out regulations.</div>
                             <div class="border-b border-gray-400 min-h-[48px] w-full flex items-center justify-start p-1 bg-slate-50/50 rounded relative">
+                                <!-- DocuSign Stamp ID Badge Graphics -->
                                 <div id="tech-stamp-graphic" class="absolute right-2 top-1 text-[7px] text-gray-400 font-mono uppercase tracking-tighter hidden">Digitally Signed via Pulsar App</div>
                                 <span id="pdf-tech-sig-output" class="signature-script-font text-2xl text-blue-700 pl-3 leading-none select-none tracking-wide"></span>
                                 <span id="pdf-tech-sig-placeholder" class="text-gray-300 font-mono text-[10px] tracking-widest uppercase pl-2">No Signature Recorded</span>
@@ -423,6 +444,7 @@
             </div>
         </section>
 
+        <!-- 4. HISTORICAL ARCHIVE VIEW -->
         <section id="view-archive" class="hidden space-y-6">
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="p-4 sm:p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-purple-50/50">
@@ -459,12 +481,14 @@
             </div>
         </section>
 
+        <!-- 5. ADMIN SETTINGS VIEW -->
         <section id="view-admin" class="hidden space-y-6">
             <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
                 <div class="border-b border-gray-200 pb-4">
                     <h2 class="text-base sm:text-lg font-bold text-gray-900"><i class="fa-solid fa-user-gear text-slate-700 mr-2"></i>Administrative Control Panel</h2>
                 </div>
 
+                <!-- TERMINAL SECURITY CONFIGURATION PANEL -->
                 <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-white space-y-4">
                     <div class="flex items-center space-x-3">
                         <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-shield-halved text-base sm:text-lg"></i></div>
@@ -482,6 +506,7 @@
                     </div>
                 </div>
 
+                <!-- SYSTEM BRANDING THEME SELECTOR -->
                 <div class="p-4 sm:p-5 rounded-xl border border-gray-200 bg-white space-y-3">
                     <div class="flex items-center space-x-3">
                         <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-palette text-base sm:text-lg"></i></div>
@@ -497,6 +522,7 @@
                     </div>
                 </div>
 
+                <!-- DATABASE PANEL -->
                 <div class="p-4 sm:p-5 rounded-xl border border-gray-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-gradient-to-r from-slate-50 to-white">
                     <div class="flex items-center space-x-3">
                         <div class="p-2.5 bg-slate-100 text-slate-600 rounded-lg flex-shrink-0"><i class="fa-solid fa-database text-base sm:text-lg"></i></div>
@@ -514,6 +540,7 @@
 
     </main>
 
+    <!-- FLOATING FOOTER STATUS -->
     <footer class="bg-white border-t border-gray-200 text-center py-4 text-xs text-gray-400 font-medium mt-12">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
             <span>&copy; 2026 Astro Development.</span>
@@ -521,6 +548,7 @@
         </div>
     </footer>
 
+    <!-- MAIN CORE LOGIC APP SCRIPT -->
     <script>
         let pmDatabase = [
             { id: "1", asset: "HYD-PRESS-01 (Bay A)", code: "PM-M-101", title: "Main Cylinder Seal & Fluid Quality Check", frequency: "Monthly", date: "2026-06-18", completedDate: null, technician: "D. Vance", status: "Pending", notes: "No external leaks visible at start of shift. Fluid looks clear.", techSig: "", supervisorSig: "", tasks: [{text: "Verify safety LOTO installation rules", checked: true, condition: "OK"}, {text: "Check pressure manifold lines for microscopic fissures", checked: false, condition: "Nominal"}, {text: "Extract fluid sample for particulate contamination index analysis", checked: false, condition: ""}, {text: "Torque main anchor assembly framework pins", checked: false, condition: ""}] },
@@ -567,10 +595,45 @@
             document.getElementById('form-tech-sig').addEventListener('input', updateLiveDocPreview);
             document.getElementById('form-supervisor-sig').addEventListener('input', updateLiveDocPreview);
 
+            // Add real-time change listener for standard interval selectors
+            document.getElementById('form-frequency').addEventListener('change', handleFrequencyDateCalculation);
+
             document.getElementById('pin-input').addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') verifyPinCode();
             });
         });
+
+        /* DYNAMIC INTERVAL DISPATCH & NEW SPECIFICATION GENERATOR PROTOCOL */
+        function handleFrequencyDateCalculation(e) {
+            const selectedInterval = e.target.value.trim();
+            const dateInput = document.getElementById('form-date');
+            
+            let baseDate = new Date();
+            if (dateInput.value) {
+                baseDate = new Date(dateInput.value + 'T00:00:00');
+            }
+
+            let daysToShift = 0;
+            switch(selectedInterval) {
+                case 'Weekly': daysToShift = 7; break;
+                case 'Monthly': daysToShift = 30; break;
+                case 'Bi-Monthly': daysToShift = 60; break;
+                case 'Quarterly': daysToShift = 91; break;
+                case 'Semi-Annually': daysToShift = 182; break;
+                case 'Annually': daysToShift = 365; break;
+            }
+
+            if (daysToShift > 0) {
+                baseDate.setDate(baseDate.getDate() + daysToShift);
+                dateInput.value = baseDate.toISOString().split('T')[0];
+
+                // Clear layout references to specify this duplicate asset workscope as a fresh profile specification sheet entry
+                document.getElementById('edit-pm-id').value = '';
+                document.getElementById('builder-form-title').innerText = "Create New PM Specification (Future Interval)";
+                
+                updateLiveDocPreview();
+            }
+        }
 
         /* MOBILE DRAWER LAYER NAVIGATION CONTROLS */
         function toggleMobileSidebar() {
